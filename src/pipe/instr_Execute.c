@@ -39,16 +39,16 @@ extern comb_logic_t copy_w_ctl_sigs(w_ctl_sigs_t *, w_ctl_sigs_t *);
 comb_logic_t execute_instr(x_instr_impl_t *in, m_instr_impl_t *out) {
     //connecting wires
     out->seq_succ_PC = in->seq_succ_PC;
-    copy_m_ctl_sigs(out->M_sigs, in->M_sigs);
-    copy_w_ctl_sigs(out->W_sigs, in->W_sigs);
+    copy_m_ctl_sigs(&(out->M_sigs), &(in->M_sigs));
+    copy_w_ctl_sigs(&(out->W_sigs), &(in->W_sigs));
     out->val_b = in->val_b;
     out->dst = in->dst;
     
     //MUX2 
-    uint64_t valb = (in->X_sigs->valb_sel ? in->val_imm : in->val_b);
+    uint64_t valb = (in->X_sigs.valb_sel ? in->val_imm : in->val_b);
 
     //ALU
-    alu(in->val_a, valb, in->val_hw, in->op, in->X_sigs->set_CC, in->cond, out->val_ex, X_condval);
+    alu(in->val_a, valb, in->val_hw, in->op, in->X_sigs.set_CC, in->cond, out->val_ex, X_condval);
     out->cond_holds = X_condval;
 
     return;

@@ -1,0 +1,53 @@
+
+hazards/ret_hazard:     file format elf64-littleaarch64
+
+
+Disassembly of section .note.gnu.build-id:
+
+00000000004000e8 <.note.gnu.build-id>:
+  4000e8:	00000004 	.inst	0x00000004 ; undefined
+  4000ec:	00000014 	.inst	0x00000014 ; undefined
+  4000f0:	00000003 	.inst	0x00000003 ; undefined
+  4000f4:	00554e47 	.inst	0x00554e47 ; undefined
+  4000f8:	14d32892 	b	38ca340 <__bss_end__+0x34ba1f8>
+  4000fc:	303865ce 	adr	x14, 470db5 <__bss_end__+0x60c6d>
+  400100:	f8c952c4 	.inst	0xf8c952c4 ; undefined
+  400104:	f21ba422 	ands	x2, x1, #0x7fe07fe07fe07fe0
+  400108:	b3677e33 	bfi	x19, x17, #25, #32
+
+Disassembly of section .text:
+
+000000000040010c <start>:
+  40010c:	d2800140 	mov	x0, #0xa                   	// #10
+  400110:	d28001e1 	mov	x1, #0xf                   	// #15
+  400114:	d2800002 	mov	x2, #0x0                   	// #0
+  400118:	ab0203c2 	adds	x2, x30, x2
+  40011c:	94000008 	bl	40013c <helper>
+  400120:	d280001e 	mov	x30, #0x0                   	// #0
+  400124:	ab1e005e 	adds	x30, x2, x30
+  400128:	ab010000 	adds	x0, x0, x1
+  40012c:	ca0500a5 	eor	x5, x5, x5
+  400130:	aa2503e5 	mvn	x5, x5
+  400134:	f80000a0 	stur	x0, [x5]
+  400138:	d65f03c0 	ret
+
+000000000040013c <helper>:
+  40013c:	d2800aa0 	mov	x0, #0x55                  	// #85
+  400140:	d2800381 	mov	x1, #0x1c                  	// #28
+  400144:	d65f03c0 	ret
+
+Disassembly of section .comment:
+
+0000000000000000 <.comment>:
+   0:	3a434347 	ccmn	w26, w3, #0x7, mi  // mi = first
+   4:	62552820 	.inst	0x62552820 ; undefined
+   8:	75746e75 	.inst	0x75746e75 ; undefined
+   c:	6e694c2f 	uqshl	v15.8h, v1.8h, v9.8h
+  10:	206f7261 	.inst	0x206f7261 ; undefined
+  14:	2e352e37 	uqsub	v23.8b, v17.8b, v21.8b
+  18:	75332d30 	.inst	0x75332d30 ; undefined
+  1c:	746e7562 	.inst	0x746e7562 ; undefined
+  20:	317e3175 	adds	w21, w11, #0xf8c, lsl #12
+  24:	34302e38 	cbz	w24, 605e8 <start-0x39fb24>
+  28:	2e372029 	usubl	v9.8h, v1.8b, v23.8b
+  2c:	00302e35 	.inst	0x00302e35 ; NYI

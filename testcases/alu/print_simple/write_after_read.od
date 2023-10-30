@@ -1,0 +1,62 @@
+
+write_after_read:     file format elf64-littleaarch64
+
+
+Disassembly of section .note.gnu.build-id:
+
+00000000004000e8 <.note.gnu.build-id>:
+  4000e8:	00000004 	.inst	0x00000004 ; undefined
+  4000ec:	00000014 	.inst	0x00000014 ; undefined
+  4000f0:	00000003 	.inst	0x00000003 ; undefined
+  4000f4:	00554e47 	.inst	0x00554e47 ; undefined
+  4000f8:	42830607 	.inst	0x42830607 ; undefined
+  4000fc:	93d6fd43 	extr	x3, x10, x22, #63
+  400100:	87066f4f 	.inst	0x87066f4f ; undefined
+  400104:	962d4e85 	bl	fffffffff8f53b18 <__end__+0xfffffffff8b439a0>
+  400108:	e1ff1f60 	.inst	0xe1ff1f60 ; undefined
+
+Disassembly of section .text:
+
+000000000040010c <start>:
+  40010c:	d2800180 	mov	x0, #0xc                   	// #12
+  400110:	d2800bc1 	mov	x1, #0x5e                  	// #94
+  400114:	d2800242 	mov	x2, #0x12                  	// #18
+  400118:	d503201f 	nop
+  40011c:	d503201f 	nop
+  400120:	d503201f 	nop
+  400124:	d503201f 	nop
+  400128:	ab020003 	adds	x3, x0, x2
+  40012c:	d503201f 	nop
+  400130:	d503201f 	nop
+  400134:	d503201f 	nop
+  400138:	d503201f 	nop
+  40013c:	ab030024 	adds	x4, x1, x3
+  400140:	d503201f 	nop
+  400144:	d503201f 	nop
+  400148:	d503201f 	nop
+  40014c:	ca0500a5 	eor	x5, x5, x5
+  400150:	d503201f 	nop
+  400154:	d503201f 	nop
+  400158:	d503201f 	nop
+  40015c:	aa2503e5 	mvn	x5, x5
+  400160:	d503201f 	nop
+  400164:	d503201f 	nop
+  400168:	d503201f 	nop
+  40016c:	f80000a4 	stur	x4, [x5]
+  400170:	d65f03c0 	ret
+
+Disassembly of section .comment:
+
+0000000000000000 <.comment>:
+   0:	3a434347 	ccmn	w26, w3, #0x7, mi  // mi = first
+   4:	62552820 	.inst	0x62552820 ; undefined
+   8:	75746e75 	.inst	0x75746e75 ; undefined
+   c:	6e694c2f 	uqshl	v15.8h, v1.8h, v9.8h
+  10:	206f7261 	.inst	0x206f7261 ; undefined
+  14:	2e352e37 	uqsub	v23.8b, v17.8b, v21.8b
+  18:	75332d30 	.inst	0x75332d30 ; undefined
+  1c:	746e7562 	.inst	0x746e7562 ; undefined
+  20:	317e3175 	adds	w21, w11, #0xf8c, lsl #12
+  24:	34302e38 	cbz	w24, 605e8 <start-0x39fb24>
+  28:	2e372029 	usubl	v9.8h, v1.8b, v23.8b
+  2c:	00302e35 	.inst	0x00302e35 ; NYI

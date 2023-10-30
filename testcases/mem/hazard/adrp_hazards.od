@@ -1,0 +1,49 @@
+
+adrp_hazards:     file format elf64-littleaarch64
+
+
+Disassembly of section .note.gnu.build-id:
+
+0000000000400120 <.note.gnu.build-id>:
+  400120:	00000004 	.inst	0x00000004 ; undefined
+  400124:	00000014 	.inst	0x00000014 ; undefined
+  400128:	00000003 	.inst	0x00000003 ; undefined
+  40012c:	00554e47 	.inst	0x00554e47 ; undefined
+  400130:	685f9f9d 	.inst	0x685f9f9d ; undefined
+  400134:	c8f5bf46 	.inst	0xc8f5bf46 ; undefined
+  400138:	307b6a00 	adr	x0, 4f6e79 <__bss_end__+0xe6d11>
+  40013c:	95e98af8 	bl	7e62d1c <__bss_end__+0x7a52bb4>
+  400140:	e5407e76 	st3w	{z22.s-z24.s}, p7, [x19, x0, lsl #2]
+
+Disassembly of section .text:
+
+0000000000400144 <start>:
+  400144:	ca0500a5 	eor	x5, x5, x5
+  400148:	aa2503e5 	mvn	x5, x5
+  40014c:	90000080 	adrp	x0, 410000 <start+0xfebc>
+  400150:	91058000 	add	x0, x0, #0x160
+  400154:	f8400001 	ldur	x1, [x0]
+  400158:	f80000a1 	stur	x1, [x5]
+  40015c:	d65f03c0 	ret
+
+Disassembly of section .data:
+
+0000000000410160 <myvar>:
+  410160:	00000019 	.word	0x00000019
+  410164:	00000000 	.word	0x00000000
+
+Disassembly of section .comment:
+
+0000000000000000 <.comment>:
+   0:	3a434347 	ccmn	w26, w3, #0x7, mi  // mi = first
+   4:	62552820 	.inst	0x62552820 ; undefined
+   8:	75746e75 	.inst	0x75746e75 ; undefined
+   c:	6e694c2f 	uqshl	v15.8h, v1.8h, v9.8h
+  10:	206f7261 	.inst	0x206f7261 ; undefined
+  14:	2e352e37 	uqsub	v23.8b, v17.8b, v21.8b
+  18:	75332d30 	.inst	0x75332d30 ; undefined
+  1c:	746e7562 	.inst	0x746e7562 ; undefined
+  20:	317e3175 	adds	w21, w11, #0xf8c, lsl #12
+  24:	34302e38 	cbz	w24, 605e8 <start-0x39fb5c>
+  28:	2e372029 	usubl	v9.8h, v1.8b, v23.8b
+  2c:	00302e35 	.inst	0x00302e35 ; NYI

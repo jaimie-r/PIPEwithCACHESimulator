@@ -1,0 +1,52 @@
+
+exceptions/bad_mem_11:     file format elf64-littleaarch64
+
+
+Disassembly of section .note.gnu.build-id:
+
+0000000000400120 <.note.gnu.build-id>:
+  400120:	00000004 	.inst	0x00000004 ; undefined
+  400124:	00000014 	.inst	0x00000014 ; undefined
+  400128:	00000003 	.inst	0x00000003 ; undefined
+  40012c:	00554e47 	.inst	0x00554e47 ; undefined
+  400130:	3f6859e0 	.inst	0x3f6859e0 ; undefined
+  400134:	2a41b8cb 	.inst	0x2a41b8cb ; undefined
+  400138:	38b277d3 	.inst	0x38b277d3 ; undefined
+  40013c:	28e21f53 	ldp	w19, w7, [x26], #-240
+  400140:	207d02db 	.inst	0x207d02db ; undefined
+
+Disassembly of section .text:
+
+0000000000400148 <start>:
+  400148:	90000080 	adrp	x0, 410000 <start+0xfeb8>
+  40014c:	91001000 	add	x0, x0, #0x4
+  400150:	f8000001 	stur	x1, [x0]
+  400154:	d65f03c0 	ret
+
+Disassembly of section .data:
+
+0000000000410160 <x>:
+  410160:	00000064 	.word	0x00000064
+  410164:	00000000 	.word	0x00000000
+  410168:	000000c8 	.word	0x000000c8
+  41016c:	00000000 	.word	0x00000000
+  410170:	0000012c 	.word	0x0000012c
+  410174:	00000000 	.word	0x00000000
+  410178:	00000190 	.word	0x00000190
+  41017c:	00000000 	.word	0x00000000
+
+Disassembly of section .comment:
+
+0000000000000000 <.comment>:
+   0:	3a434347 	ccmn	w26, w3, #0x7, mi  // mi = first
+   4:	62552820 	.inst	0x62552820 ; undefined
+   8:	75746e75 	.inst	0x75746e75 ; undefined
+   c:	6e694c2f 	uqshl	v15.8h, v1.8h, v9.8h
+  10:	206f7261 	.inst	0x206f7261 ; undefined
+  14:	2e352e37 	uqsub	v23.8b, v17.8b, v21.8b
+  18:	75332d30 	.inst	0x75332d30 ; undefined
+  1c:	746e7562 	.inst	0x746e7562 ; undefined
+  20:	317e3175 	adds	w21, w11, #0xf8c, lsl #12
+  24:	34302e38 	cbz	w24, 605e8 <start-0x39fb60>
+  28:	2e372029 	usubl	v9.8h, v1.8b, v23.8b
+  2c:	00302e35 	.inst	0x00302e35 ; NYI

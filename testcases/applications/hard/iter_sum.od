@@ -1,0 +1,80 @@
+
+hazards/iter_sum:     file format elf64-littleaarch64
+
+
+Disassembly of section .note.gnu.build-id:
+
+00000000004000e8 <.note.gnu.build-id>:
+  4000e8:	00000004 	.inst	0x00000004 ; undefined
+  4000ec:	00000014 	.inst	0x00000014 ; undefined
+  4000f0:	00000003 	.inst	0x00000003 ; undefined
+  4000f4:	00554e47 	.inst	0x00554e47 ; undefined
+  4000f8:	075e0e70 	.inst	0x075e0e70 ; undefined
+  4000fc:	e3b48c88 	.inst	0xe3b48c88 ; undefined
+  400100:	d0010a5b 	adrp	x27, 254a000 <__end__+0x2139e60>
+  400104:	ee2e1f4d 	.inst	0xee2e1f4d ; undefined
+  400108:	556183d7 	.inst	0x556183d7 ; undefined
+
+Disassembly of section .text:
+
+000000000040010c <start>:
+  40010c:	ca010021 	eor	x1, x1, x1
+  400110:	910003e1 	mov	x1, sp
+  400114:	d2800205 	mov	x5, #0x10                  	// #16
+  400118:	eb050021 	subs	x1, x1, x5
+  40011c:	ca020042 	eor	x2, x2, x2
+  400120:	f2800347 	movk	x7, #0x1a
+  400124:	ab070042 	adds	x2, x2, x7
+  400128:	ca030063 	eor	x3, x3, x3
+  40012c:	91000463 	add	x3, x3, #0x1
+
+0000000000400130 <.INPUT_LOOP>:
+  400130:	eb020064 	subs	x4, x3, x2
+  400134:	540000a0 	b.eq	400148 <.START_SUM>  // b.none
+  400138:	f8000023 	stur	x3, [x1]
+  40013c:	91000463 	add	x3, x3, #0x1
+  400140:	eb050021 	subs	x1, x1, x5
+  400144:	17fffffb 	b	400130 <.INPUT_LOOP>
+
+0000000000400148 <.START_SUM>:
+  400148:	ca000000 	eor	x0, x0, x0
+  40014c:	ca020042 	eor	x2, x2, x2
+  400150:	ca030063 	eor	x3, x3, x3
+  400154:	f2800367 	movk	x7, #0x1b
+  400158:	ab070063 	adds	x3, x3, x7
+  40015c:	ca0600c6 	eor	x6, x6, x6
+  400160:	d2800205 	mov	x5, #0x10                  	// #16
+  400164:	d2800027 	mov	x7, #0x1                   	// #1
+  400168:	eb0700c7 	subs	x7, x6, x7
+
+000000000040016c <.SUM_LOOP>:
+  40016c:	eb060064 	subs	x4, x3, x6
+  400170:	540000e0 	b.eq	40018c <.EXIT>  // b.none
+  400174:	ab050021 	adds	x1, x1, x5
+  400178:	f8400022 	ldur	x2, [x1]
+  40017c:	ab020000 	adds	x0, x0, x2
+  400180:	ca020042 	eor	x2, x2, x2
+  400184:	ab070063 	adds	x3, x3, x7
+  400188:	17fffff9 	b	40016c <.SUM_LOOP>
+
+000000000040018c <.EXIT>:
+  40018c:	ca0500a5 	eor	x5, x5, x5
+  400190:	aa2503e5 	mvn	x5, x5
+  400194:	f80000a0 	stur	x0, [x5]
+  400198:	d65f03c0 	ret
+
+Disassembly of section .comment:
+
+0000000000000000 <.comment>:
+   0:	3a434347 	ccmn	w26, w3, #0x7, mi  // mi = first
+   4:	62552820 	.inst	0x62552820 ; undefined
+   8:	75746e75 	.inst	0x75746e75 ; undefined
+   c:	6e694c2f 	uqshl	v15.8h, v1.8h, v9.8h
+  10:	206f7261 	.inst	0x206f7261 ; undefined
+  14:	2e352e37 	uqsub	v23.8b, v17.8b, v21.8b
+  18:	75332d30 	.inst	0x75332d30 ; undefined
+  1c:	746e7562 	.inst	0x746e7562 ; undefined
+  20:	317e3175 	adds	w21, w11, #0xf8c, lsl #12
+  24:	34302e38 	cbz	w24, 605e8 <start-0x39fb24>
+  28:	2e372029 	usubl	v9.8h, v1.8b, v23.8b
+  2c:	00302e35 	.inst	0x00302e35 ; NYI

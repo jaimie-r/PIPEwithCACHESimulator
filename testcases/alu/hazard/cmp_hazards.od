@@ -1,0 +1,37 @@
+
+cmp_hazards:     file format elf64-littleaarch64
+
+
+Disassembly of section .text:
+
+00000000004000b0 <start>:
+  4000b0:	d2800020 	mov	x0, #0x1                   	// #1
+  4000b4:	d2800001 	mov	x1, #0x0                   	// #0
+  4000b8:	d2800144 	mov	x4, #0xa                   	// #10
+  4000bc:	d2800022 	mov	x2, #0x1                   	// #1
+  4000c0:	aa2503e5 	mvn	x5, x5
+
+00000000004000c4 <.loop>:
+  4000c4:	f80000a0 	stur	x0, [x5]
+  4000c8:	91000442 	add	x2, x2, #0x1
+  4000cc:	ab020000 	adds	x0, x0, x2
+  4000d0:	91000421 	add	x1, x1, #0x1
+  4000d4:	eb04003f 	cmp	x1, x4
+  4000d8:	54ffff61 	b.ne	4000c4 <.loop>  // b.any
+  4000dc:	d65f03c0 	ret
+
+Disassembly of section .comment:
+
+0000000000000000 <.comment>:
+   0:	3a434347 	ccmn	w26, w3, #0x7, mi  // mi = first
+   4:	62552820 	.inst	0x62552820 ; undefined
+   8:	75746e75 	.inst	0x75746e75 ; undefined
+   c:	6e694c2f 	uqshl	v15.8h, v1.8h, v9.8h
+  10:	206f7261 	.inst	0x206f7261 ; undefined
+  14:	2e352e37 	uqsub	v23.8b, v17.8b, v21.8b
+  18:	75332d30 	.inst	0x75332d30 ; undefined
+  1c:	746e7562 	.inst	0x746e7562 ; undefined
+  20:	317e3175 	adds	w21, w11, #0xf8c, lsl #12
+  24:	34302e38 	cbz	w24, 605e8 <start-0x39fac8>
+  28:	2e372029 	usubl	v9.8h, v1.8b, v23.8b
+  2c:	00302e35 	.inst	0x00302e35 ; NYI

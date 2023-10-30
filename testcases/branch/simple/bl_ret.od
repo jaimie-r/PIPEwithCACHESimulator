@@ -1,0 +1,55 @@
+
+branch_simple/bl_ret:     file format elf64-littleaarch64
+
+
+Disassembly of section .note.gnu.build-id:
+
+00000000004000e8 <.note.gnu.build-id>:
+  4000e8:	00000004 	.inst	0x00000004 ; undefined
+  4000ec:	00000014 	.inst	0x00000014 ; undefined
+  4000f0:	00000003 	.inst	0x00000003 ; undefined
+  4000f4:	00554e47 	.inst	0x00554e47 ; undefined
+  4000f8:	17f8b3c0 	b	22cff8 <foo-0x1d3118>
+  4000fc:	53fc4783 	.inst	0x53fc4783 ; undefined
+  400100:	36f035ea 	tbz	w10, #30, 4007bc <start+0x694>
+  400104:	d6f855a2 	.inst	0xd6f855a2 ; undefined
+  400108:	e14f73f4 	.inst	0xe14f73f4 ; undefined
+
+Disassembly of section .text:
+
+0000000000400110 <foo>:
+  400110:	910003c1 	add	x1, x30, #0x0
+  400114:	9101ec42 	add	x2, x2, #0x7b
+  400118:	9103a863 	add	x3, x3, #0xea
+  40011c:	91056484 	add	x4, x4, #0x159
+  400120:	d65f0020 	ret	x1
+  400124:	d503201f 	nop
+
+0000000000400128 <start>:
+  400128:	90000000 	adrp	x0, 400000 <foo-0x110>
+  40012c:	d10043ff 	sub	sp, sp, #0x10
+  400130:	f80003fe 	stur	x30, [sp]
+  400134:	97fffff7 	bl	400110 <foo>
+  400138:	9104a000 	add	x0, x0, #0x128
+  40013c:	f84003fe 	ldur	x30, [sp]
+  400140:	910043ff 	add	sp, sp, #0x10
+  400144:	d503201f 	nop
+  400148:	9100a000 	add	x0, x0, #0x28
+  40014c:	d65f0000 	ret	x0
+  400150:	d65f03c0 	ret
+
+Disassembly of section .comment:
+
+0000000000000000 <.comment>:
+   0:	3a434347 	ccmn	w26, w3, #0x7, mi  // mi = first
+   4:	62552820 	.inst	0x62552820 ; undefined
+   8:	75746e75 	.inst	0x75746e75 ; undefined
+   c:	6e694c2f 	uqshl	v15.8h, v1.8h, v9.8h
+  10:	206f7261 	.inst	0x206f7261 ; undefined
+  14:	2e352e37 	uqsub	v23.8b, v17.8b, v21.8b
+  18:	75332d30 	.inst	0x75332d30 ; undefined
+  1c:	746e7562 	.inst	0x746e7562 ; undefined
+  20:	317e3175 	adds	w21, w11, #0xf8c, lsl #12
+  24:	34302e38 	cbz	w24, 605e8 <foo-0x39fb28>
+  28:	2e372029 	usubl	v9.8h, v1.8b, v23.8b
+  2c:	00302e35 	.inst	0x00302e35 ; NYI

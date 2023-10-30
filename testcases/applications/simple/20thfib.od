@@ -1,0 +1,76 @@
+
+nic-20thfib:     file format elf64-littleaarch64
+
+
+Disassembly of section .text:
+
+0000000000400078 <start>:
+  400078:	d28002a1 	mov	x1, #0x15                  	// #21
+  40007c:	d503201f 	nop
+  400080:	d503201f 	nop
+  400084:	d503201f 	nop
+  400088:	d503201f 	nop
+  40008c:	d2800022 	mov	x2, #0x1                   	// #1
+  400090:	d503201f 	nop
+  400094:	d503201f 	nop
+  400098:	d503201f 	nop
+  40009c:	d503201f 	nop
+  4000a0:	d2800000 	mov	x0, #0x0                   	// #0
+  4000a4:	d503201f 	nop
+  4000a8:	d503201f 	nop
+  4000ac:	d503201f 	nop
+  4000b0:	d503201f 	nop
+  4000b4:	d2800024 	mov	x4, #0x1                   	// #1
+  4000b8:	d503201f 	nop
+  4000bc:	d503201f 	nop
+  4000c0:	d503201f 	nop
+  4000c4:	d503201f 	nop
+
+00000000004000c8 <.check>:
+  4000c8:	eb040021 	subs	x1, x1, x4
+  4000cc:	d503201f 	nop
+  4000d0:	d503201f 	nop
+  4000d4:	d503201f 	nop
+  4000d8:	d503201f 	nop
+  4000dc:	54000281 	b.ne	40012c <.calc>  // b.any
+  4000e0:	d503201f 	nop
+  4000e4:	d503201f 	nop
+  4000e8:	d503201f 	nop
+  4000ec:	d503201f 	nop
+  4000f0:	aa3f03e1 	mvn	x1, xzr
+  4000f4:	d503201f 	nop
+  4000f8:	d503201f 	nop
+  4000fc:	d503201f 	nop
+  400100:	d503201f 	nop
+  400104:	f8000020 	stur	x0, [x1]
+  400108:	d503201f 	nop
+  40010c:	d503201f 	nop
+  400110:	d503201f 	nop
+  400114:	d503201f 	nop
+  400118:	d65f03c0 	ret
+  40011c:	d503201f 	nop
+  400120:	d503201f 	nop
+  400124:	d503201f 	nop
+  400128:	d503201f 	nop
+
+000000000040012c <.calc>:
+  40012c:	ab020003 	adds	x3, x0, x2
+  400130:	d503201f 	nop
+  400134:	d503201f 	nop
+  400138:	d503201f 	nop
+  40013c:	d503201f 	nop
+  400140:	aa0203e0 	mov	x0, x2
+  400144:	d503201f 	nop
+  400148:	d503201f 	nop
+  40014c:	d503201f 	nop
+  400150:	d503201f 	nop
+  400154:	aa0303e2 	mov	x2, x3
+  400158:	d503201f 	nop
+  40015c:	d503201f 	nop
+  400160:	d503201f 	nop
+  400164:	d503201f 	nop
+  400168:	17ffffd8 	b	4000c8 <.check>
+  40016c:	d503201f 	nop
+  400170:	d503201f 	nop
+  400174:	d503201f 	nop
+  400178:	d503201f 	nop

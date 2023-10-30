@@ -1,0 +1,42 @@
+
+exceptions/bad_insn_1:     file format elf64-littleaarch64
+
+
+Disassembly of section .note.gnu.build-id:
+
+00000000004000e8 <.note.gnu.build-id>:
+  4000e8:	00000004 	.inst	0x00000004 ; undefined
+  4000ec:	00000014 	.inst	0x00000014 ; undefined
+  4000f0:	00000003 	.inst	0x00000003 ; undefined
+  4000f4:	00554e47 	.inst	0x00554e47 ; undefined
+  4000f8:	725d2e07 	.inst	0x725d2e07 ; undefined
+  4000fc:	ab685309 	.inst	0xab685309 ; undefined
+  400100:	7e655e98 	uqrshl	h24, h20, h5
+  400104:	c91f97e6 	.inst	0xc91f97e6 ; undefined
+  400108:	fa76133a 	.inst	0xfa76133a ; undefined
+
+Disassembly of section .text:
+
+0000000000400110 <start>:
+  400110:	d2824680 	mov	x0, #0x1234                	// #4660
+  400114:	d503201f 	nop
+  400118:	d503201f 	nop
+  40011c:	d503201f 	nop
+  400120:	d65f0000 	ret	x0
+  400124:	d65f03c0 	ret
+
+Disassembly of section .comment:
+
+0000000000000000 <.comment>:
+   0:	3a434347 	ccmn	w26, w3, #0x7, mi  // mi = first
+   4:	62552820 	.inst	0x62552820 ; undefined
+   8:	75746e75 	.inst	0x75746e75 ; undefined
+   c:	6e694c2f 	uqshl	v15.8h, v1.8h, v9.8h
+  10:	206f7261 	.inst	0x206f7261 ; undefined
+  14:	2e352e37 	uqsub	v23.8b, v17.8b, v21.8b
+  18:	75332d30 	.inst	0x75332d30 ; undefined
+  1c:	746e7562 	.inst	0x746e7562 ; undefined
+  20:	317e3175 	adds	w21, w11, #0xf8c, lsl #12
+  24:	34302e38 	cbz	w24, 605e8 <start-0x39fb28>
+  28:	2e372029 	usubl	v9.8h, v1.8b, v23.8b
+  2c:	00302e35 	.inst	0x00302e35 ; NYI

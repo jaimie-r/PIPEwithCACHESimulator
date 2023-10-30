@@ -1,0 +1,40 @@
+
+fact:     file format elf64-littleaarch64
+
+
+Disassembly of section .note.gnu.build-id:
+
+00000000004000b0 <.note.gnu.build-id>:
+  4000b0:	00000004 	.inst	0x00000004 ; undefined
+  4000b4:	00000014 	.inst	0x00000014 ; undefined
+  4000b8:	00000003 	.inst	0x00000003 ; undefined
+  4000bc:	00554e47 	.inst	0x00554e47 ; undefined
+  4000c0:	051ab005 	.inst	0x051ab005 ; undefined
+  4000c4:	94bce99a 	bl	333a72c <__end__+0x2f2a604>
+  4000c8:	c3ee9977 	.inst	0xc3ee9977 ; undefined
+  4000cc:	089d3feb 	stllrb	w11, [sp]
+  4000d0:	33281fad 	.inst	0x33281fad ; undefined
+
+Disassembly of section .text:
+
+00000000004000d4 <start>:
+  4000d4:	d2800005 	mov	x5, #0x0                   	// #0
+  4000d8:	d2800024 	mov	x4, #0x1                   	// #1
+  4000dc:	d28000a2 	mov	x2, #0x5                   	// #5
+  4000e0:	d2800020 	mov	x0, #0x1                   	// #1
+  4000e4:	aa0203e1 	mov	x1, x2
+  4000e8:	aa0003e3 	mov	x3, x0
+  4000ec:	d2800000 	mov	x0, #0x0                   	// #0
+  4000f0:	ea040026 	ands	x6, x1, x4
+  4000f4:	eb0400df 	cmp	x6, x4
+  4000f8:	54000041 	b.ne	400100 <start+0x2c>  // b.any
+  4000fc:	ab030000 	adds	x0, x0, x3
+  400100:	d37ff863 	lsl	x3, x3, #1
+  400104:	d341fc21 	lsr	x1, x1, #1
+  400108:	eb05003f 	cmp	x1, x5
+  40010c:	54ffff21 	b.ne	4000f0 <start+0x1c>  // b.any
+  400110:	eb040042 	subs	x2, x2, x4
+  400114:	54fffe81 	b.ne	4000e4 <start+0x10>  // b.any
+  400118:	aa3f03e1 	mvn	x1, xzr
+  40011c:	f8000020 	stur	x0, [x1]
+  400120:	d65f03c0 	ret

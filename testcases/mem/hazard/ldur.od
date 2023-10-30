@@ -1,0 +1,47 @@
+
+hazards/madhavan-ldur:     file format elf64-littleaarch64
+
+
+Disassembly of section .note.gnu.build-id:
+
+00000000004000e8 <.note.gnu.build-id>:
+  4000e8:	00000004 	.inst	0x00000004 ; undefined
+  4000ec:	00000014 	.inst	0x00000014 ; undefined
+  4000f0:	00000003 	.inst	0x00000003 ; undefined
+  4000f4:	00554e47 	.inst	0x00554e47 ; undefined
+  4000f8:	693c43c4 	.inst	0x693c43c4 ; undefined
+  4000fc:	c151ba3f 	.inst	0xc151ba3f ; undefined
+  400100:	ac40be80 	ldnp	q0, q15, [x20, #16]
+  400104:	b0c0a275 	adrp	x21, ffffffff8184d000 <__bss_end__+0xffffffff8143cec8>
+  400108:	e47ae69b 	st4b	{z27.b-z30.b}, p1, [x20, #-24, mul vl]
+
+Disassembly of section .text:
+
+000000000040010c <start>:
+  40010c:	d10043e0 	sub	x0, sp, #0x10
+  400110:	d29579a1 	mov	x1, #0xabcd                	// #43981
+  400114:	f8000001 	stur	x1, [x0]
+  400118:	f8400002 	ldur	x2, [x0]
+  40011c:	91002000 	add	x0, x0, #0x8
+  400120:	f8400003 	ldur	x3, [x0]
+  400124:	ca0500a5 	eor	x5, x5, x5
+  400128:	aa2503e5 	mvn	x5, x5
+  40012c:	f80000a2 	stur	x2, [x5]
+  400130:	f80000a3 	stur	x3, [x5]
+  400134:	d65f03c0 	ret
+
+Disassembly of section .comment:
+
+0000000000000000 <.comment>:
+   0:	3a434347 	ccmn	w26, w3, #0x7, mi  // mi = first
+   4:	62552820 	.inst	0x62552820 ; undefined
+   8:	75746e75 	.inst	0x75746e75 ; undefined
+   c:	6e694c2f 	uqshl	v15.8h, v1.8h, v9.8h
+  10:	206f7261 	.inst	0x206f7261 ; undefined
+  14:	2e352e37 	uqsub	v23.8b, v17.8b, v21.8b
+  18:	75332d30 	.inst	0x75332d30 ; undefined
+  1c:	746e7562 	.inst	0x746e7562 ; undefined
+  20:	317e3175 	adds	w21, w11, #0xf8c, lsl #12
+  24:	34302e38 	cbz	w24, 605e8 <start-0x39fb24>
+  28:	2e372029 	usubl	v9.8h, v1.8b, v23.8b
+  2c:	00302e35 	.inst	0x00302e35 ; NYI

@@ -1,0 +1,61 @@
+
+madhavan-movk:     file format elf64-littleaarch64
+
+
+Disassembly of section .text:
+
+00000000004000b0 <start>:
+  4000b0:	f29579a0 	movk	x0, #0xabcd
+  4000b4:	d503201f 	nop
+  4000b8:	d503201f 	nop
+  4000bc:	d503201f 	nop
+  4000c0:	d370bc00 	lsl	x0, x0, #16
+  4000c4:	d503201f 	nop
+  4000c8:	d503201f 	nop
+  4000cc:	d503201f 	nop
+  4000d0:	f29b9740 	movk	x0, #0xdcba
+  4000d4:	d503201f 	nop
+  4000d8:	d503201f 	nop
+  4000dc:	d503201f 	nop
+  4000e0:	ca0500a5 	eor	x5, x5, x5
+  4000e4:	d503201f 	nop
+  4000e8:	d503201f 	nop
+  4000ec:	d503201f 	nop
+  4000f0:	aa2503e5 	mvn	x5, x5
+  4000f4:	d503201f 	nop
+  4000f8:	d503201f 	nop
+  4000fc:	d503201f 	nop
+  400100:	f80000a0 	stur	x0, [x5]
+  400104:	d503201f 	nop
+  400108:	d503201f 	nop
+  40010c:	d503201f 	nop
+  400110:	ca010021 	eor	x1, x1, x1
+  400114:	d503201f 	nop
+  400118:	d503201f 	nop
+  40011c:	d503201f 	nop
+  400120:	8b010001 	add	x1, x0, x1
+  400124:	d503201f 	nop
+  400128:	d503201f 	nop
+  40012c:	d503201f 	nop
+  400130:	f2824681 	movk	x1, #0x1234
+  400134:	d503201f 	nop
+  400138:	d503201f 	nop
+  40013c:	d503201f 	nop
+  400140:	f80000a1 	stur	x1, [x5]
+  400144:	d65f03c0 	ret
+
+Disassembly of section .comment:
+
+0000000000000000 <.comment>:
+   0:	3a434347 	ccmn	w26, w3, #0x7, mi  // mi = first
+   4:	62552820 	.inst	0x62552820 ; undefined
+   8:	75746e75 	.inst	0x75746e75 ; undefined
+   c:	6e694c2f 	uqshl	v15.8h, v1.8h, v9.8h
+  10:	206f7261 	.inst	0x206f7261 ; undefined
+  14:	2e352e37 	uqsub	v23.8b, v17.8b, v21.8b
+  18:	75332d30 	.inst	0x75332d30 ; undefined
+  1c:	746e7562 	.inst	0x746e7562 ; undefined
+  20:	317e3175 	adds	w21, w11, #0xf8c, lsl #12
+  24:	34302e38 	cbz	w24, 605e8 <start-0x39fac8>
+  28:	2e372029 	usubl	v9.8h, v1.8b, v23.8b
+  2c:	00302e35 	.inst	0x00302e35 ; NYI

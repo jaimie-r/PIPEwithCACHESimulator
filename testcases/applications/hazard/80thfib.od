@@ -1,0 +1,37 @@
+
+hazards/nic-80thfib:     file format elf64-littleaarch64
+
+
+Disassembly of section .note.gnu.build-id:
+
+00000000004000b0 <.note.gnu.build-id>:
+  4000b0:	00000004 	.inst	0x00000004 ; undefined
+  4000b4:	00000014 	.inst	0x00000014 ; undefined
+  4000b8:	00000003 	.inst	0x00000003 ; undefined
+  4000bc:	00554e47 	.inst	0x00554e47 ; undefined
+  4000c0:	db84685e 	.inst	0xdb84685e ; undefined
+  4000c4:	0e315e36 	sqrshl	v22.8b, v17.8b, v17.8b
+  4000c8:	a7da65bb 	.inst	0xa7da65bb ; undefined
+  4000cc:	4bd5f868 	.inst	0x4bd5f868 ; undefined
+  4000d0:	87030506 	.inst	0x87030506 ; undefined
+
+Disassembly of section .text:
+
+00000000004000d4 <start>:
+  4000d4:	d2800a21 	mov	x1, #0x51                  	// #81
+  4000d8:	d2800022 	mov	x2, #0x1                   	// #1
+  4000dc:	d2800000 	mov	x0, #0x0                   	// #0
+  4000e0:	d2800024 	mov	x4, #0x1                   	// #1
+
+00000000004000e4 <.check>:
+  4000e4:	eb040021 	subs	x1, x1, x4
+  4000e8:	54000081 	b.ne	4000f8 <.calc>  // b.any
+  4000ec:	aa3f03e1 	mvn	x1, xzr
+  4000f0:	f8000020 	stur	x0, [x1]
+  4000f4:	d65f03c0 	ret
+
+00000000004000f8 <.calc>:
+  4000f8:	ab020003 	adds	x3, x0, x2
+  4000fc:	aa0203e0 	mov	x0, x2
+  400100:	aa0303e2 	mov	x2, x3
+  400104:	17fffff8 	b	4000e4 <.check>

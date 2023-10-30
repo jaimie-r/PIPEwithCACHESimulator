@@ -1,0 +1,51 @@
+
+ldur_stur:     file format elf64-littleaarch64
+
+
+Disassembly of section .note.gnu.build-id:
+
+00000000004000e8 <.note.gnu.build-id>:
+  4000e8:	00000004 	.inst	0x00000004 ; undefined
+  4000ec:	00000014 	.inst	0x00000014 ; undefined
+  4000f0:	00000003 	.inst	0x00000003 ; undefined
+  4000f4:	00554e47 	.inst	0x00554e47 ; undefined
+  4000f8:	cc5709be 	.inst	0xcc5709be ; undefined
+  4000fc:	56cb5537 	.inst	0x56cb5537 ; undefined
+  400100:	2e593fba 	fdiv	v26.4h, v29.4h, v25.4h
+  400104:	03ee45a3 	.inst	0x03ee45a3 ; undefined
+  400108:	400a635e 	.inst	0x400a635e ; undefined
+
+Disassembly of section .text:
+
+0000000000400110 <start>:
+  400110:	d10083ff 	sub	sp, sp, #0x20
+  400114:	d28003e0 	mov	x0, #0x1f                  	// #31
+  400118:	d2800521 	mov	x1, #0x29                  	// #41
+  40011c:	d2800762 	mov	x2, #0x3b                  	// #59
+  400120:	d2800343 	mov	x3, #0x1a                  	// #26
+  400124:	f80003e0 	stur	x0, [sp]
+  400128:	f80083e1 	stur	x1, [sp, #8]
+  40012c:	f80103e2 	stur	x2, [sp, #16]
+  400130:	f80183e3 	stur	x3, [sp, #24]
+  400134:	f84003e4 	ldur	x4, [sp]
+  400138:	f84083e5 	ldur	x5, [sp, #8]
+  40013c:	f84103e6 	ldur	x6, [sp, #16]
+  400140:	f84183e7 	ldur	x7, [sp, #24]
+  400144:	910083ff 	add	sp, sp, #0x20
+  400148:	d65f03c0 	ret
+
+Disassembly of section .comment:
+
+0000000000000000 <.comment>:
+   0:	3a434347 	ccmn	w26, w3, #0x7, mi  // mi = first
+   4:	62552820 	.inst	0x62552820 ; undefined
+   8:	75746e75 	.inst	0x75746e75 ; undefined
+   c:	6e694c2f 	uqshl	v15.8h, v1.8h, v9.8h
+  10:	206f7261 	.inst	0x206f7261 ; undefined
+  14:	2e352e37 	uqsub	v23.8b, v17.8b, v21.8b
+  18:	75332d30 	.inst	0x75332d30 ; undefined
+  1c:	746e7562 	.inst	0x746e7562 ; undefined
+  20:	317e3175 	adds	w21, w11, #0xf8c, lsl #12
+  24:	34302e38 	cbz	w24, 605e8 <start-0x39fb28>
+  28:	2e372029 	usubl	v9.8h, v1.8b, v23.8b
+  2c:	00302e35 	.inst	0x00302e35 ; NYI

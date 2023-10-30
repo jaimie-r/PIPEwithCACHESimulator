@@ -1,0 +1,99 @@
+
+hazards/rec_sum:     file format elf64-littleaarch64
+
+
+Disassembly of section .note.gnu.build-id:
+
+00000000004000e8 <.note.gnu.build-id>:
+  4000e8:	00000004 	.inst	0x00000004 ; undefined
+  4000ec:	00000014 	.inst	0x00000014 ; undefined
+  4000f0:	00000003 	.inst	0x00000003 ; undefined
+  4000f4:	00554e47 	.inst	0x00554e47 ; undefined
+  4000f8:	4f4aa90b 	smull2	v11.4s, v8.8h, v10.h[4]
+  4000fc:	e3b017c4 	.inst	0xe3b017c4 ; undefined
+  400100:	fed38e7a 	.inst	0xfed38e7a ; undefined
+  400104:	72ce85ca 	.inst	0x72ce85ca ; undefined
+  400108:	e16671e9 	.inst	0xe16671e9 ; undefined
+
+Disassembly of section .text:
+
+000000000040010c <start>:
+  40010c:	ca010021 	eor	x1, x1, x1
+  400110:	910003e1 	mov	x1, sp
+  400114:	d2800207 	mov	x7, #0x10                  	// #16
+  400118:	eb070021 	subs	x1, x1, x7
+  40011c:	ca020042 	eor	x2, x2, x2
+  400120:	d2800367 	mov	x7, #0x1b                  	// #27
+  400124:	ab070042 	adds	x2, x2, x7
+  400128:	ca030063 	eor	x3, x3, x3
+  40012c:	91000463 	add	x3, x3, #0x1
+  400130:	d2800207 	mov	x7, #0x10                  	// #16
+
+0000000000400134 <.INPUT_LOOP>:
+  400134:	eb020064 	subs	x4, x3, x2
+  400138:	540000a0 	b.eq	40014c <.START_SUM>  // b.none
+  40013c:	f8000023 	stur	x3, [x1]
+  400140:	91000463 	add	x3, x3, #0x1
+  400144:	eb070021 	subs	x1, x1, x7
+  400148:	17fffffb 	b	400134 <.INPUT_LOOP>
+
+000000000040014c <.START_SUM>:
+  40014c:	ca000000 	eor	x0, x0, x0
+  400150:	ca020042 	eor	x2, x2, x2
+  400154:	ca030063 	eor	x3, x3, x3
+  400158:	d2800347 	mov	x7, #0x1a                  	// #26
+  40015c:	ab070063 	adds	x3, x3, x7
+  400160:	ca0500a5 	eor	x5, x5, x5
+  400164:	ab0100a5 	adds	x5, x5, x1
+  400168:	ca0600c6 	eor	x6, x6, x6
+  40016c:	d2800207 	mov	x7, #0x10                  	// #16
+  400170:	eb0700a5 	subs	x5, x5, x7
+  400174:	f80000be 	stur	x30, [x5]
+  400178:	94000007 	bl	400194 <recursive>
+  40017c:	f84000be 	ldur	x30, [x5]
+  400180:	910040a5 	add	x5, x5, #0x10
+
+0000000000400184 <.EXIT>:
+  400184:	ca0500a5 	eor	x5, x5, x5
+  400188:	aa2503e5 	mvn	x5, x5
+  40018c:	f80000a0 	stur	x0, [x5]
+  400190:	d65f03c0 	ret
+
+0000000000400194 <recursive>:
+  400194:	d2800207 	mov	x7, #0x10                  	// #16
+  400198:	eb0700a5 	subs	x5, x5, x7
+  40019c:	f80000be 	stur	x30, [x5]
+  4001a0:	ca0700e7 	eor	x7, x7, x7
+  4001a4:	eb070064 	subs	x4, x3, x7
+  4001a8:	54000100 	b.eq	4001c8 <.BASE_CASE>  // b.none
+  4001ac:	91004021 	add	x1, x1, #0x10
+  4001b0:	f8400022 	ldur	x2, [x1]
+  4001b4:	ab020000 	adds	x0, x0, x2
+  4001b8:	ca020042 	eor	x2, x2, x2
+  4001bc:	d2800029 	mov	x9, #0x1                   	// #1
+  4001c0:	eb090063 	subs	x3, x3, x9
+  4001c4:	97fffff4 	bl	400194 <recursive>
+
+00000000004001c8 <.BASE_CASE>:
+  4001c8:	f84000be 	ldur	x30, [x5]
+  4001cc:	910040a5 	add	x5, x5, #0x10
+  4001d0:	d65f03c0 	ret
+  4001d4:	d503201f 	nop
+  4001d8:	d503201f 	nop
+  4001dc:	d503201f 	nop
+
+Disassembly of section .comment:
+
+0000000000000000 <.comment>:
+   0:	3a434347 	ccmn	w26, w3, #0x7, mi  // mi = first
+   4:	62552820 	.inst	0x62552820 ; undefined
+   8:	75746e75 	.inst	0x75746e75 ; undefined
+   c:	6e694c2f 	uqshl	v15.8h, v1.8h, v9.8h
+  10:	206f7261 	.inst	0x206f7261 ; undefined
+  14:	2e352e37 	uqsub	v23.8b, v17.8b, v21.8b
+  18:	75332d30 	.inst	0x75332d30 ; undefined
+  1c:	746e7562 	.inst	0x746e7562 ; undefined
+  20:	317e3175 	adds	w21, w11, #0xf8c, lsl #12
+  24:	34302e38 	cbz	w24, 605e8 <start-0x39fb24>
+  28:	2e372029 	usubl	v9.8h, v1.8b, v23.8b
+  2c:	00302e35 	.inst	0x00302e35 ; NYI

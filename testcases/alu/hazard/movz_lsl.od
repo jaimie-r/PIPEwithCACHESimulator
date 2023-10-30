@@ -1,0 +1,45 @@
+
+hazards/madhavan-movz:     file format elf64-littleaarch64
+
+
+Disassembly of section .note.gnu.build-id:
+
+00000000004000e8 <.note.gnu.build-id>:
+  4000e8:	00000004 	.inst	0x00000004 ; undefined
+  4000ec:	00000014 	.inst	0x00000014 ; undefined
+  4000f0:	00000003 	.inst	0x00000003 ; undefined
+  4000f4:	00554e47 	.inst	0x00554e47 ; undefined
+  4000f8:	95a3f24e 	bl	6cfca30 <__bss_end__+0x68ec900>
+  4000fc:	3682f565 	tbz	w5, #16, 405fa8 <start+0x5e9c>
+  400100:	4879d199 	.inst	0x4879d199 ; undefined
+  400104:	3721ccd1 	tbnz	w17, #4, 403a9c <start+0x3990>
+  400108:	5421477d 	.inst	0x5421477d ; undefined
+
+Disassembly of section .text:
+
+000000000040010c <start>:
+  40010c:	d29579a0 	mov	x0, #0xabcd                	// #43981
+  400110:	d370bc00 	lsl	x0, x0, #16
+  400114:	d29b9740 	mov	x0, #0xdcba                	// #56506
+  400118:	aa2503e5 	mvn	x5, x5
+  40011c:	f80000a0 	stur	x0, [x5]
+  400120:	ca010021 	eor	x1, x1, x1
+  400124:	8b010001 	add	x1, x0, x1
+  400128:	d2824681 	mov	x1, #0x1234                	// #4660
+  40012c:	d65f03c0 	ret
+
+Disassembly of section .comment:
+
+0000000000000000 <.comment>:
+   0:	3a434347 	ccmn	w26, w3, #0x7, mi  // mi = first
+   4:	62552820 	.inst	0x62552820 ; undefined
+   8:	75746e75 	.inst	0x75746e75 ; undefined
+   c:	6e694c2f 	uqshl	v15.8h, v1.8h, v9.8h
+  10:	206f7261 	.inst	0x206f7261 ; undefined
+  14:	2e352e37 	uqsub	v23.8b, v17.8b, v21.8b
+  18:	75332d30 	.inst	0x75332d30 ; undefined
+  1c:	746e7562 	.inst	0x746e7562 ; undefined
+  20:	317e3175 	adds	w21, w11, #0xf8c, lsl #12
+  24:	34302e38 	cbz	w24, 605e8 <start-0x39fb24>
+  28:	2e372029 	usubl	v9.8h, v1.8b, v23.8b
+  2c:	00302e35 	.inst	0x00302e35 ; NYI

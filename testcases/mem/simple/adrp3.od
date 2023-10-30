@@ -1,0 +1,52 @@
+
+madhavan-adrp:     file format elf64-littleaarch64
+
+
+Disassembly of section .text:
+
+00000000004000e8 <start>:
+  4000e8:	d2800000 	mov	x0, #0x0                   	// #0
+  4000ec:	b0000080 	adrp	x0, 411000 <allocMem>
+  4000f0:	d503201f 	nop
+  4000f4:	d503201f 	nop
+  4000f8:	d503201f 	nop
+  4000fc:	aa2503e5 	mvn	x5, x5
+  400100:	d503201f 	nop
+  400104:	d503201f 	nop
+  400108:	d503201f 	nop
+  40010c:	f80000a0 	stur	x0, [x5]
+  400110:	d503201f 	nop
+  400114:	d503201f 	nop
+  400118:	d503201f 	nop
+  40011c:	b0000081 	adrp	x1, 411000 <allocMem>
+  400120:	d65f03c0 	ret
+  400124:	d503201f 	nop
+
+0000000000400128 <rand_func>:
+  400128:	d503201f 	nop
+  40012c:	d503201f 	nop
+  400130:	d503201f 	nop
+  400134:	d503201f 	nop
+  400138:	d503201f 	nop
+  40013c:	d65f03c0 	ret
+
+Disassembly of section .data:
+
+0000000000411000 <allocMem>:
+	...
+
+Disassembly of section .comment:
+
+0000000000000000 <.comment>:
+   0:	3a434347 	ccmn	w26, w3, #0x7, mi  // mi = first
+   4:	62552820 	.inst	0x62552820 ; undefined
+   8:	75746e75 	.inst	0x75746e75 ; undefined
+   c:	6e694c2f 	uqshl	v15.8h, v1.8h, v9.8h
+  10:	206f7261 	.inst	0x206f7261 ; undefined
+  14:	2e352e37 	uqsub	v23.8b, v17.8b, v21.8b
+  18:	75332d30 	.inst	0x75332d30 ; undefined
+  1c:	746e7562 	.inst	0x746e7562 ; undefined
+  20:	317e3175 	adds	w21, w11, #0xf8c, lsl #12
+  24:	34302e38 	cbz	w24, 605e8 <start-0x39fb00>
+  28:	2e372029 	usubl	v9.8h, v1.8b, v23.8b
+  2c:	00302e35 	.inst	0x00302e35 ; NYI

@@ -1,0 +1,8 @@
+*.o
+se
+test-se
+csim
+test-csim
+*.txt
+*.out
+.vscode/*

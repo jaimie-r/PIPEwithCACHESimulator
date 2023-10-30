@@ -1,0 +1,76 @@
+
+alu_print_simple/cmp:     file format elf64-littleaarch64
+
+
+Disassembly of section .note.gnu.build-id:
+
+00000000004000e8 <.note.gnu.build-id>:
+  4000e8:	00000004 	.inst	0x00000004 ; undefined
+  4000ec:	00000014 	.inst	0x00000014 ; undefined
+  4000f0:	00000003 	.inst	0x00000003 ; undefined
+  4000f4:	00554e47 	.inst	0x00554e47 ; undefined
+  4000f8:	e1524579 	.inst	0xe1524579 ; undefined
+  4000fc:	38f3d93e 	ldrsb	w30, [x9, w19, sxtw #0]
+  400100:	88d0bb66 	.inst	0x88d0bb66 ; undefined
+  400104:	fee9e0ee 	.inst	0xfee9e0ee ; undefined
+  400108:	b85e4267 	ldur	w7, [x19, #-28]
+
+Disassembly of section .text:
+
+000000000040010c <start>:
+  40010c:	d2800680 	mov	x0, #0x34                  	// #52
+  400110:	d2801821 	mov	x1, #0xc1                  	// #193
+  400114:	d503201f 	nop
+  400118:	d503201f 	nop
+  40011c:	d503201f 	nop
+  400120:	d503201f 	nop
+  400124:	eb01001f 	cmp	x0, x1
+  400128:	d503201f 	nop
+  40012c:	d503201f 	nop
+  400130:	d503201f 	nop
+  400134:	d503201f 	nop
+  400138:	5400022a 	b.ge	40017c <.helper>  // b.tcont
+
+000000000040013c <.goback>:
+  40013c:	d503201f 	nop
+  400140:	d503201f 	nop
+  400144:	d503201f 	nop
+  400148:	ca0500a5 	eor	x5, x5, x5
+  40014c:	d503201f 	nop
+  400150:	d503201f 	nop
+  400154:	d503201f 	nop
+  400158:	aa2503e5 	mvn	x5, x5
+  40015c:	d503201f 	nop
+  400160:	d503201f 	nop
+  400164:	d503201f 	nop
+  400168:	f80000a0 	stur	x0, [x5]
+  40016c:	d503201f 	nop
+  400170:	d503201f 	nop
+  400174:	d503201f 	nop
+  400178:	d65f03c0 	ret
+
+000000000040017c <.helper>:
+  40017c:	d503201f 	nop
+  400180:	d503201f 	nop
+  400184:	d503201f 	nop
+  400188:	d2800020 	mov	x0, #0x1                   	// #1
+  40018c:	d503201f 	nop
+  400190:	d503201f 	nop
+  400194:	d503201f 	nop
+  400198:	17ffffe9 	b	40013c <.goback>
+
+Disassembly of section .comment:
+
+0000000000000000 <.comment>:
+   0:	3a434347 	ccmn	w26, w3, #0x7, mi  // mi = first
+   4:	62552820 	.inst	0x62552820 ; undefined
+   8:	75746e75 	.inst	0x75746e75 ; undefined
+   c:	6e694c2f 	uqshl	v15.8h, v1.8h, v9.8h
+  10:	206f7261 	.inst	0x206f7261 ; undefined
+  14:	2e352e37 	uqsub	v23.8b, v17.8b, v21.8b
+  18:	75332d30 	.inst	0x75332d30 ; undefined
+  1c:	746e7562 	.inst	0x746e7562 ; undefined
+  20:	317e3175 	adds	w21, w11, #0xf8c, lsl #12
+  24:	34302e38 	cbz	w24, 605e8 <start-0x39fb24>
+  28:	2e372029 	usubl	v9.8h, v1.8b, v23.8b
+  2c:	00302e35 	.inst	0x00302e35 ; NYI

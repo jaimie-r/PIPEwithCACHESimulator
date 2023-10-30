@@ -1,0 +1,32 @@
+
+subs_hazards:     file format elf64-littleaarch64
+
+
+Disassembly of section .text:
+
+00000000004000b0 <start>:
+  4000b0:	d2800140 	mov	x0, #0xa                   	// #10
+  4000b4:	d2800021 	mov	x1, #0x1                   	// #1
+  4000b8:	aa2503e5 	mvn	x5, x5
+
+00000000004000bc <.loop>:
+  4000bc:	f80000a0 	stur	x0, [x5]
+  4000c0:	eb010000 	subs	x0, x0, x1
+  4000c4:	54ffffc1 	b.ne	4000bc <.loop>  // b.any
+  4000c8:	d65f03c0 	ret
+
+Disassembly of section .comment:
+
+0000000000000000 <.comment>:
+   0:	3a434347 	ccmn	w26, w3, #0x7, mi  // mi = first
+   4:	62552820 	.inst	0x62552820 ; undefined
+   8:	75746e75 	.inst	0x75746e75 ; undefined
+   c:	6e694c2f 	uqshl	v15.8h, v1.8h, v9.8h
+  10:	206f7261 	.inst	0x206f7261 ; undefined
+  14:	2e352e37 	uqsub	v23.8b, v17.8b, v21.8b
+  18:	75332d30 	.inst	0x75332d30 ; undefined
+  1c:	746e7562 	.inst	0x746e7562 ; undefined
+  20:	317e3175 	adds	w21, w11, #0xf8c, lsl #12
+  24:	34302e38 	cbz	w24, 605e8 <start-0x39fac8>
+  28:	2e372029 	usubl	v9.8h, v1.8b, v23.8b
+  2c:	00302e35 	.inst	0x00302e35 ; NYI

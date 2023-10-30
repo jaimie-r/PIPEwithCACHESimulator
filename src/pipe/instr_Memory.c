@@ -34,5 +34,18 @@ extern comb_logic_t copy_w_ctl_sigs(w_ctl_sigs_t *, w_ctl_sigs_t *);
  */
 
 comb_logic_t memory_instr(m_instr_impl_t *in, w_instr_impl_t *out) {
+    in->m->op = out->w->op;
+    in->m->print_op = out->w->print_op;
+    in->m->val_ex = out->w->val_ex;
+    in->m->status = out->w->status;
+    copy_w_ctl_sigs(out->w->W_sigs, in->m->M_sigs);
+    in->m->dst = out->w->dst;
+    // questions:
+    // seq succ PC?
+    // cond_holds? for when branching is wrong?
+    // where to change status?
+    if(in->m->dmem_read || in->m->dmem_write) {
+        dmem(in->m->val_b, in->m->val_ex, in->m->M_sigs->dmem_read, in->m->M_sigs->dmem_write); 
+    }
     return;
 }

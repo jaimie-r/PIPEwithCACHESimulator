@@ -119,7 +119,7 @@ typedef struct m_instr_impl {
     uint64_t val_b;         // regfile output for register src2
     uint8_t dst;            // destination register encoding
     uint64_t val_ex;        // value computed by ALU
-    stat_t status;          // status of this instruction
+    stat_t status;          // status of this instruction (bubble, aok, or hlt) don't change manually for week one
 } m_instr_impl_t;
 
 // Pipeline register feeding the Writeback stage.

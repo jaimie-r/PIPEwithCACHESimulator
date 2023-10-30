@@ -42,8 +42,9 @@ comb_logic_t memory_instr(m_instr_impl_t *in, w_instr_impl_t *out) {
     in->m->dst = out->w->dst;
     // questions:
     // seq succ PC?
-    // cond_holds? for when branching is wrong?
+    // cond_holds? for when branching is wrong? outputs from execute, not used here
     // where to change status?
+    // can we use github desktop, edit on github desktop and then run on vs code
     if(in->m->dmem_read || in->m->dmem_write) {
         dmem(in->m->val_b, in->m->val_ex, in->m->M_sigs->dmem_read, in->m->M_sigs->dmem_write); 
     }

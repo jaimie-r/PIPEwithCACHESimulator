@@ -38,6 +38,7 @@ extern int64_t W_wval;
 static comb_logic_t 
 generate_DXMW_control(opcode_t op,
                       d_ctl_sigs_t *D_sigs, x_ctl_sigs_t *X_sigs, m_ctl_sigs_t *M_sigs, w_ctl_sigs_t *W_sigs) {
+    
     return;
 }
 
@@ -72,11 +73,16 @@ decide_alu_op(opcode_t op, alu_op_t *ALU_op) {
 
 comb_logic_t 
 copy_m_ctl_sigs(m_ctl_sigs_t *dest, m_ctl_sigs_t *src) {
+    dest->dmem_read = src->dmem_read ? 1 : 0;
+    dest->dmem_write = src->dmem_write ? 1 : 0;
     return;
 }
 
 comb_logic_t 
 copy_w_ctl_sigs(w_ctl_sigs_t *dest, w_ctl_sigs_t *src) {
+    dest->dst_sel = src->dst_sel ? 1 : 0;
+    dest->wval_sel = src->wval_sel ? 1 : 0;
+    dest->w_enable = src->w_enable ? 1 : 0;
     return;
 }
 

@@ -32,5 +32,8 @@ extern int64_t W_wval;
  */
 
 comb_logic_t wback_instr(w_instr_impl_t *in) {
+
+    //W_wval = (in->w->W_sigs->wval_sel ? in->w->val_ex : in->w->mem);
+
     return;
 }

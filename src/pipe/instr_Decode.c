@@ -50,7 +50,30 @@ generate_DXMW_control(opcode_t op,
 
 static comb_logic_t 
 extract_immval(uint32_t insnbits, opcode_t op, int64_t *imm) {
-    return;
+    switch(op) {
+        case OP_LDUR:
+        case OP_STUR:
+            *imm = bitfield_s64(insnbits, 12, 9);
+            break;
+        case OP_MOVK:
+        case OP_MOVZ:
+            *imm = bitfield_u32(insnbits, 5, 16);
+            break;
+        case OP_ADRP:
+            *imm = bitfield_s64(insnbits, 5, 19);
+            break;
+        case OP_ADD_RI:
+        case OP_SUB_RI:
+        case OP_LSL:
+        case OP_LSR:
+        case OP_UBFM:
+        case OP_ASR:
+            *imm = bitfield_u32(insnbits, 10, 12);
+            break;
+        default:
+            break;
+    }
+    return imm;
 }
 
 /*
@@ -61,7 +84,50 @@ extract_immval(uint32_t insnbits, opcode_t op, int64_t *imm) {
  */
 static comb_logic_t
 decide_alu_op(opcode_t op, alu_op_t *ALU_op) {
-    return;
+    switch(op) {
+        case OP_LDUR:
+        case OP_STUR:
+        case OP_ADRP:
+        case OP_ADD_RI:
+        case OP_ADDS_RR:
+            *ALU_op = PLUS_OP;
+            break;
+        case OP_SUB_RI:
+        case OP_SUBS_RR:
+        case OP_CMP_RR:
+            *ALU_op = MINUS_OP;
+            break;
+        case OP_MVN:
+            *ALU_op = NEG_OP;
+            break;
+        case OP_ORR_RR:
+            *ALU_op = OR_OP;
+            break;
+        case OP_EOR_RR:
+            *ALU_op = EOR_OP;
+            break;
+        case OP_ANDS_RR:
+        case OP_TST_RR:
+            *ALU_op = AND_OP;
+            break;
+        case OP_MOVK:
+        case OP_MOVZ:
+            *ALU_op = MOV_OP;
+            break;
+        case OP_LSL: 
+            *ALU_op = LSL_OP;
+            break;
+        case OP_LSR:
+            *ALU_op = LSR_OP;
+            break;
+        case OP_ASR:
+            *ALU_op = ASR_OP;
+            break;
+        default:
+            *ALU_op = PASS_A_OP;
+            break;
+    }
+    return *ALU_op;
 }
 
 /*
@@ -89,6 +155,50 @@ copy_w_ctl_sigs(w_ctl_sigs_t *dest, w_ctl_sigs_t *src) {
 comb_logic_t
 extract_regs(uint32_t insnbits, opcode_t op, 
              uint8_t *src1, uint8_t *src2, uint8_t *dst) {
+    switch(op) {
+        //M 
+        case OP_LDUR:
+            *src1 = bitfield_u32(insnbits, 5, 5);
+            *dst = bitfield_u32(insnbits, 0, 5);
+        case OP_STUR:
+            *src1 = bitfield_u32(insnbits, 5, 5);
+            *src2 = bitfield_u32(insnbits, 0, 5);
+            break;
+        //I1
+        case OP_MOVK:
+        case OP_MOVZ:
+            *dst = bitfield_u32(insnbits, 0, 5);
+            break;
+        //RI
+        case OP_ADD_RI:
+        case OP_SUB_RI:
+        case OP_LSL:
+        case OP_LSR:
+        case OP_UBFM:
+        case OP_ASR:
+            *src1 = bitfield_u32(insnbits, 5, 5);
+            *dst = bitfield_u32(insnbits, 0, 5);
+            break;
+        //RR
+        case OP_ADDS_RR:
+        case OP_SUBS_RR:
+        case OP_CMP_RR: 
+        case OP_MVN:
+        case OP_ORR_RR:
+        case OP_EOR_RR:
+        case OP_ANDS_RR:
+        case OP_TST_RR:
+            *src1 = bitfield_u32(insnbits, 5, 5);
+            *src2 = bitfield_u32(insnbits, 16, 5);
+            *dst = bitfield_u32(insnbits, 0, 5);
+            break;
+        //B3
+        case OP_RET:
+            *src1 = bitfield_u32(insnbits, 5, 5);
+            break;
+        default:
+            break;
+    }
     return;
 }
 

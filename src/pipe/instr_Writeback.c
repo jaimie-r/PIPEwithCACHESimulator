@@ -31,6 +31,8 @@ extern int64_t W_wval;
  * You will need the global variable W_wval.
  */
 
+//TODO: update processors arch.registers w/ W_wval
+
 comb_logic_t wback_instr(w_instr_impl_t *in) {
 
     W_wval = (in->W_sigs.wval_sel ? in->val_ex : in->val_mem);

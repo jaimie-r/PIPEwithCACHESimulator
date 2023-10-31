@@ -21,6 +21,8 @@ extern mem_status_t dmem_status;
 
 extern uint64_t F_PC;
 
+//TODO: fetch instr, select pc, predict pc, fix instr aliases
+
 /*
  * Select PC logic.
  * STUDENT TO-DO:

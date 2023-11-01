@@ -79,6 +79,8 @@ predict_PC(uint64_t current_PC, uint32_t insnbits, opcode_t op,
         int32_t upper12 = insnbits & 0xFFFFE0;
         upper12 >>= 8;
         //upper12
+        upper12 &= ~0xFFF;
+        *current_PC = upper12;
     }
     return;
 }

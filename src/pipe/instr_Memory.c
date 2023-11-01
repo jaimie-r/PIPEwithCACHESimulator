@@ -34,7 +34,7 @@ extern comb_logic_t copy_w_ctl_sigs(w_ctl_sigs_t *, w_ctl_sigs_t *);
  */
 
 comb_logic_t memory_instr(m_instr_impl_t *in, w_instr_impl_t *out) {
-    in->m->op = out->w->op;
+    in->op = out->op;
     in->m->print_op = out->w->print_op;
     in->m->val_ex = out->w->val_ex;
     in->m->status = out->w->status;

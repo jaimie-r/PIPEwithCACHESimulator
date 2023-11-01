@@ -44,9 +44,8 @@ select_PC(uint64_t pred_PC,                                     // The predicted
         return;
     }
     // Modify starting here.
-    if(M_cond_val) { // correction from b.cond
+    if(!M_cond_val) { // correction from b.cond
         *current_PC = seq_succ;
-        D_opcode = M_opcode;
     } else if (D_opcode == OP_RET) { // ret
         *current_PC = val_a;
     } else { // base case

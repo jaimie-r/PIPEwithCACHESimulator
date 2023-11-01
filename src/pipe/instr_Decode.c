@@ -86,7 +86,11 @@ extract_immval(uint32_t insnbits, opcode_t op, int64_t *imm) {
             *imm = bitfield_u32(insnbits, 5, 16);
             break;
         case OP_ADRP:
-            *imm = bitfield_s64(insnbits, 5, 19);
+            uint32_t immlow= bitfield_s64(insnbits, 29, 2);
+            immlow <<= 12;
+            uint32_t immhigh = bitfield_s64(insnbits, 5, 19);
+            immhigh <<= 14;
+            *imm = immlow + immhigh;
             break;
         case OP_ADD_RI:
         case OP_SUB_RI:
@@ -189,8 +193,8 @@ extract_regs(uint32_t insnbits, opcode_t op,
         //M
         *src1 = bitfield_u32(insnbits, 5, 5);
         *src2 = bitfield_u32(insnbits, 0, 5);
-    } else if (op==OP_MOVK || op==OP_MOVZ){
-        //I1
+    } else if (op==OP_MOVK || op==OP_MOVZ || op==OP_ADRP){
+        //I1 + I2
         *dst = bitfield_u32(insnbits, 0, 5);
     } else if (op==OP_ADD_RI || op==OP_SUB_RI || op==OP_LSL || 
                 op==OP_LSR || op==OP_UBFM || op==OP_ASR){

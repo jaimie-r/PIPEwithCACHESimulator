@@ -92,6 +92,9 @@ predict_PC(uint64_t current_PC, uint32_t insnbits, opcode_t op,
 
 static
 void fix_instr_aliases(uint32_t insnbits, opcode_t *op) {
+
+
+    
     return;
 }
 
@@ -125,6 +128,9 @@ comb_logic_t fetch_instr(f_instr_impl_t *in, d_instr_impl_t *out) {
     }
     else {
         // WRITE HERE!   
+        //get isnbits
+        //get opcode from those bits
+        //helper functions 
     }
     
     // We do not recommend modifying the below code.

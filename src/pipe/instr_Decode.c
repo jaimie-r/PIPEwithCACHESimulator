@@ -25,7 +25,7 @@ extern mem_status_t dmem_status;
 
 extern int64_t W_wval;
 
-//TODO: dxmw control, decode instr
+//TODO: decode instr
 
 /*
  * Control signals for D, X, M, and W stages.
@@ -40,7 +40,31 @@ extern int64_t W_wval;
 static comb_logic_t 
 generate_DXMW_control(opcode_t op,
                       d_ctl_sigs_t *D_sigs, x_ctl_sigs_t *X_sigs, m_ctl_sigs_t *M_sigs, w_ctl_sigs_t *W_sigs) {
-    
+    if(op == OP_MOVK || op == OP_MOVZ || op == OP_ADRP || op == OP_ADD_RI || 
+        op == OP_SUB_RI || op == OP_MVN || op == OP_LSL || op == OP_LSR || 
+        op == OP_UBFM || op == OP_ASR){
+            W_sigs->w_enable = 1;
+    } else if (op==OP_LDUR){
+        M_sigs->dmem_read = 1;
+        W_sigs->wval_sel = 1;
+        W_sigs->w_enable = 1;
+    } else if (op==OP_STUR) {
+        D_sigs->src2_sel = 1;
+        M_sigs->dmem_write = 1;
+    } else if (op==OP_ADDS_RR || op==OP_SUBS_RR){
+        X_sigs->valb_sel = 1;
+        X_sigs->set_CC = 1;
+        W_sigs->w_enable = 1;
+    } else if (op == OP_CMP_RR || op == OP_TST_RR){
+        X_sigs->valb_sel = 1;
+        X_sigs->set_CC = 1;
+    } else if (op==OP_ORR_RR || op == OP_EOR_RR){
+        X_sigs->valb_sel = 1;
+        W_sigs->w_enable = 1;
+    } else if (op==OP_BL){
+        W_sigs->dst_sel = 1;
+        W_sigs->w_enable = 1;
+    }
     return;
 }
 
@@ -157,50 +181,33 @@ copy_w_ctl_sigs(w_ctl_sigs_t *dest, w_ctl_sigs_t *src) {
 comb_logic_t
 extract_regs(uint32_t insnbits, opcode_t op, 
              uint8_t *src1, uint8_t *src2, uint8_t *dst) {
-    switch(op) {
-        //M 
-        case OP_LDUR:
-            *src1 = bitfield_u32(insnbits, 5, 5);
-            *dst = bitfield_u32(insnbits, 0, 5);
-        case OP_STUR:
-            *src1 = bitfield_u32(insnbits, 5, 5);
-            *src2 = bitfield_u32(insnbits, 0, 5);
-            break;
+    if(op==OP_LDUR){
+        //M
+        *src1 = bitfield_u32(insnbits, 5, 5);
+        *dst = bitfield_u32(insnbits, 0, 5);
+    } else if (op==OP_STUR){
+        //M
+        *src1 = bitfield_u32(insnbits, 5, 5);
+        *src2 = bitfield_u32(insnbits, 0, 5);
+    } else if (op==OP_MOVK || op==OP_MOVZ){
         //I1
-        case OP_MOVK:
-        case OP_MOVZ:
-            *dst = bitfield_u32(insnbits, 0, 5);
-            break;
+        *dst = bitfield_u32(insnbits, 0, 5);
+    } else if (op==OP_ADD_RI || op==OP_SUB_RI || op==OP_LSL || 
+                op==OP_LSR || op==OP_UBFM || op==OP_ASR){
         //RI
-        case OP_ADD_RI:
-        case OP_SUB_RI:
-        case OP_LSL:
-        case OP_LSR:
-        case OP_UBFM:
-        case OP_ASR:
-            *src1 = bitfield_u32(insnbits, 5, 5);
-            *dst = bitfield_u32(insnbits, 0, 5);
-            break;
+        *src1 = bitfield_u32(insnbits, 5, 5);
+        *dst = bitfield_u32(insnbits, 0, 5);
+    } else if (op==OP_ADDS_RR || op==OP_SUBS_RR || op==OP_CMP_RR || op==OP_MVN || 
+            op==OP_ORR_RR || op==OP_EOR_RR ||op==OP_ANDS_RR || op==OP_TST_RR){
         //RR
-        case OP_ADDS_RR:
-        case OP_SUBS_RR:
-        case OP_CMP_RR: 
-        case OP_MVN:
-        case OP_ORR_RR:
-        case OP_EOR_RR:
-        case OP_ANDS_RR:
-        case OP_TST_RR:
-            *src1 = bitfield_u32(insnbits, 5, 5);
-            *src2 = bitfield_u32(insnbits, 16, 5);
-            *dst = bitfield_u32(insnbits, 0, 5);
-            break;
+        *src1 = bitfield_u32(insnbits, 5, 5);
+        *src2 = bitfield_u32(insnbits, 16, 5);
+        *dst = bitfield_u32(insnbits, 0, 5);   
+    } else if (op==OP_RET){
         //B3
-        case OP_RET:
-            *src1 = bitfield_u32(insnbits, 5, 5);
-            break;
-        default:
-            break;
+        *src1 = bitfield_u32(insnbits, 5, 5);
     }
+    
     return;
 }
 
@@ -220,6 +227,33 @@ extract_regs(uint32_t insnbits, opcode_t op,
  */
 
 comb_logic_t decode_instr(d_instr_impl_t *in, x_instr_impl_t *out) {
+
+    //connect wires
+    out->seq_succ_PC = in->seq_succ_PC;
+    out->op = in->op;
+    out->status = in->status;
+
+    //local vars 
+    d_ctl_sigs_t *D_sigs;
+    uint8_t *src1;
+    uint8_t *src2;
+
+    //helpers
+    generate_DXMW_control(in->op, D_sigs, &(out->X_sigs), &(out->M_sigs), &(out->W_sigs));
+    extract_immval(in->insnbits, in->op, &(out->val_imm));
+    extract_regs(in->insnbits, in->op, src1, src2, out->dst);
+    decide_alu_op(in->op, out->ALU_op);
+    regfile(src1, src2, out->dst, W_wval,(out->W_sigs).w_enable, &(out->val_a), &(out->val_b));
+
+    //adrp fix 
+    if(in->op == OP_ADRP){
+        out->val_a = in->seq_succ_PC;
+    }
+
+    //hw
+    if(in->op == OP_MOVK || in->op == OP_MOVZ){
+        out->val_hw = bitfield_u32(in->insnbits, 21, 2);
+    }
 
     return;
 }

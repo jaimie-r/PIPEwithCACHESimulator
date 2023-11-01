@@ -44,7 +44,7 @@ select_PC(uint64_t pred_PC,                                     // The predicted
         return;
     }
     // Modify starting here.
-    if(M_condval) { // correction from b.cond
+    if(M_cond_val) { // correction from b.cond
         *current_PC = seq_succ;
         D_opcode = M_opcode;
     } else if (D_opcode == OP_RET) { // ret
@@ -78,7 +78,7 @@ predict_PC(uint64_t current_PC, uint32_t insnbits, opcode_t op,
         *seq_succ = current_PC & ~0xFFF;
         int32_t upper12 = insnbits & 0xFFFFE0;
         upper12 >>= 8;
-        upper12
+        //upper12
     }
     return;
 }
@@ -112,7 +112,7 @@ void fix_instr_aliases(uint32_t insnbits, opcode_t *op) {
 comb_logic_t fetch_instr(f_instr_impl_t *in, d_instr_impl_t *out) {
     bool imem_err = 0;
     uint64_t current_PC;
-    select_PC(/*Fill the rest of these in.*/, &current_PC);
+    //select_PC(/*Fill the rest of these in.*/, &current_PC);
     /* 
      * Students: This case is for generating HLT instructions
      * to stop the pipeline. Only write your code in the **else** case. 

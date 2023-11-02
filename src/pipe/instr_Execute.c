@@ -43,6 +43,9 @@ comb_logic_t execute_instr(x_instr_impl_t *in, m_instr_impl_t *out) {
     copy_w_ctl_sigs(&(out->W_sigs), &(in->W_sigs));
     out->val_b = in->val_b;
     out->dst = in->dst;
+    out->op = in->op;
+    out->print_op = in->print_op;
+    out->status = in->status;
     
     //MUX2 
     uint64_t valb = (in->X_sigs.valb_sel ? in->val_imm : in->val_b);

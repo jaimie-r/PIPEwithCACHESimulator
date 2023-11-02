@@ -40,8 +40,7 @@ extern int64_t W_wval;
 static comb_logic_t 
 generate_DXMW_control(opcode_t op,
                       d_ctl_sigs_t *D_sigs, x_ctl_sigs_t *X_sigs, m_ctl_sigs_t *M_sigs, w_ctl_sigs_t *W_sigs) {
-    if(op == OP_MOVK || op == OP_MOVZ || op == OP_ADRP || op == OP_ADD_RI || 
-        op == OP_SUB_RI || op == OP_MVN || op == OP_LSL || op == OP_LSR || 
+    if(op == OP_MOVK || op == OP_MOVZ || op == OP_ADRP || op == OP_ADD_RI || op == OP_SUB_RI || op == OP_MVN || op == OP_LSL || op == OP_LSR || 
         op == OP_UBFM || op == OP_ASR){
             W_sigs->w_enable = 1;
     } else if (op==OP_LDUR){
@@ -215,7 +214,15 @@ extract_regs(uint32_t insnbits, opcode_t op,
     
     //check if src1, src2, or dst are the sp
     //if they are, and the opperation isn't allowed to access the sp, change it to xzr
-
+    if(*src1 == SP_NUM) {
+        *src1 = XZR_NUM;
+    }
+    if(*src2 == SP_NUM) {
+        *src2 = XZR_NUM;
+    }
+    if(*dst == SP_NUM) {
+        *dst = XZR_NUM;
+    }
 
     return;
 }
@@ -240,6 +247,7 @@ comb_logic_t decode_instr(d_instr_impl_t *in, x_instr_impl_t *out) {
     //connect wires
     out->seq_succ_PC = in->seq_succ_PC;
     out->op = in->op;
+    out->print_op = in->print_op;
     out->status = in->status;
 
     //local vars 
@@ -263,6 +271,64 @@ comb_logic_t decode_instr(d_instr_impl_t *in, x_instr_impl_t *out) {
     if(in->op == OP_MOVK || in->op == OP_MOVZ){
         out->val_hw = bitfield_u32(in->insnbits, 21, 2);
     }
+
+    // cond
+    if(out->op == OP_B_COND) {
+        uint32_t insCond = in->insnbits &0xf;
+        switch(insCond) {
+            case 0x0:
+                out->cond = C_EQ;
+                break;
+            case 0x1:
+                out->cond = C_NE;
+                break;
+            case 0x2:
+                out->cond = C_CS;
+                break;
+            case 0x3:
+                out->cond = C_CC;
+                break;
+            case 0x4:
+                out->cond = C_MI;
+                break;
+            case 0x5:
+                out->cond = C_PL;
+                break;
+            case 0x6:
+                out->cond = C_VS;
+                break;
+            case 0x7:
+                out->cond = C_VC;
+                break;
+            case 0x8:
+                out->cond = C_HI;
+                break;
+            case 0x9:
+                out->cond = C_LS;
+                break;
+            case 0xa:
+                out->cond = C_GE;
+                break;
+            case 0xb:
+                out->cond = C_LT;
+                break;
+            case 0xc:
+                out->cond = C_GT;
+                break;
+            case 0xd:
+                out->cond = C_LE;
+                break;
+            case 0xe:
+                out->cond = C_AL;
+                break;
+            case 0xf:
+                out->cond = C_NV;
+                break; 
+            default:
+                break;
+        }
+    }
+
 
     return;
 }

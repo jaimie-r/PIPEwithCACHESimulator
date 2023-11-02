@@ -158,7 +158,7 @@ comb_logic_t fetch_instr(f_instr_impl_t *in, d_instr_impl_t *out) {
         //get isnbits
         //get opcode from those bits
         //helper functions 
-        uint32_t *imm_errPtr = null;
+        uint32_t *imm_errPtr = NULL;
         imem(current_PC, out->insnbits, *imm_errPtr); // out->insnbits
         // getting opcode from insnbits
         uint32_t opCode = bitfield(out->insnbits, 21, 11);

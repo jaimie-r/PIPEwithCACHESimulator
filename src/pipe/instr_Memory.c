@@ -45,8 +45,10 @@ comb_logic_t memory_instr(m_instr_impl_t *in, w_instr_impl_t *out) {
     // cond_holds? for when branching is wrong? outputs from execute, not used here
     // where to change status?
     // can we use github desktop, edit on github desktop and then run on vs code, git pull --rebase will merge if there's no conflict
+    bool *dmem_error = false;
+    uint64_t *dmem_thing;
     if(in->M_sigs.dmem_read || in->M_sigs.dmem_write) {
-        dmem(in->val_b, in->val_ex, in->M_sigs.dmem_read, in->M_sigs.dmem_write); 
+        dmem(in->val_b, in->val_ex, in->M_sigs.dmem_read, in->M_sigs.dmem_write, dmem_thing, dmem_error); 
     }
     return;
 }

@@ -174,6 +174,21 @@ comb_logic_t
 extract_regs(uint32_t insnbits, opcode_t op, 
              uint8_t *src1, uint8_t *src2, uint8_t *dst) {
     
+    //src1
+    if(op==OP_B || op==OP_B_COND || op==OP_NOP || op==OP_HLT || op==OP_BL){
+        *src1 = 18;
+    } else if (op==OP_MOVZ){
+        *src1 = 31;
+    } else if (op==OP_MOVK){
+        *src1 = bitfield_u32(insnbits, 0, 5);
+    } else {
+        *src1 = bitfield_u32(insnbits, 5, 5);
+    }
+    
+    //src2
+    if(op)
+
+
     if(op==OP_LDUR){
         //M
         *src1 = bitfield_u32(insnbits, 5, 5);

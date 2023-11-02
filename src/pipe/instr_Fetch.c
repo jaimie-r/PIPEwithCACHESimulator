@@ -44,7 +44,7 @@ select_PC(uint64_t pred_PC,                                     // The predicted
         return;
     }
     // Modify starting here.
-    if(!M_cond_val) { // correction from b.cond
+    if(!M_cond_val) { // correction from b.cond, not sure if this is supposed to be ! or not
         *current_PC = seq_succ;
     } else if (D_opcode == OP_RET) { // ret
         *current_PC = val_a;
@@ -77,10 +77,21 @@ predict_PC(uint64_t current_PC, uint32_t insnbits, opcode_t op,
         *seq_succ = current_PC & ~0xFFF;
         int32_t upper12 = insnbits & 0xFFFFE0;
         upper12 >>= 8;
-        //upper12
         upper12 &= ~0xFFF;
-        *current_PC = upper12;
+        *predicted_PC = upper12;
+        *seq_succ = current_PC & ~0xFFF;
+    } else {
+        *seq_succ = current_PC + 32;
+
+        if (op == OP_B || op == OP_BL ) {
+            *predicted_PC = insnbits & 0x3ffffff;
+        } else if(op == OP_B_COND) {
+            *predicted_PC = (insnbits & 0xffffe0) >> 4;
+        } else {
+            *predicted_PC = current_PC + 32;
+        }
     }
+
     return;
 }
 

@@ -212,6 +212,10 @@ extract_regs(uint32_t insnbits, opcode_t op,
         *src1 = bitfield_u32(insnbits, 5, 5);
     }
     
+    //check if src1, src2, or dst are the sp
+    //if they are, and the opperation isn't allowed to access the sp, change it to xzr
+
+
     return;
 }
 

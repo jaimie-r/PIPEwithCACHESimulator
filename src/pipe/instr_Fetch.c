@@ -104,9 +104,24 @@ predict_PC(uint64_t current_PC, uint32_t insnbits, opcode_t op,
 
 static
 void fix_instr_aliases(uint32_t insnbits, opcode_t *op) {
-
-
-    
+    uint32_t b22to31 = bitfield_u32(insnbits, 22, 10);
+    uint32_t b21to31 = bitfield_u32(insnbits, 21, 11);
+    uint32_t b10to15 = bitfield_u32(insnbits, 10, 6);
+    uint32_t b16to21 = bitfield_u32(insnbits, 16, 6);
+    uint32_t b0to4 = bitfield_u32(insnbits, 0, 5);
+    if(b22to31 == 0x34d) { // UBFM
+        if(b10to15 >= b16to21) {
+            *op = OP_LSR;
+        } else {
+            *op = OP_LSL;
+        }
+    } else if (b21to31 == 0x758) { // CMP
+        if(b0to4 != 0x1f) {
+            *op = OP_SUBS_RR;
+        } 
+    } else if (b21to31 == 0x758) { // TST
+        *op = OP_ANDS_RR;
+    }
     return;
 }
 
@@ -127,7 +142,7 @@ void fix_instr_aliases(uint32_t insnbits, opcode_t *op) {
 comb_logic_t fetch_instr(f_instr_impl_t *in, d_instr_impl_t *out) {
     bool imem_err = 0;
     uint64_t current_PC;
-    //select_PC(/*Fill the rest of these in.*/, &current_PC);
+    select_PC(in->pred_PC, D_out->op, X_out->val_a, M_out->op, M_out->cond_holds, M_out->seq_succ_PC, &current_PC);
     /* 
      * Students: This case is for generating HLT instructions
      * to stop the pipeline. Only write your code in the **else** case. 
@@ -143,6 +158,72 @@ comb_logic_t fetch_instr(f_instr_impl_t *in, d_instr_impl_t *out) {
         //get isnbits
         //get opcode from those bits
         //helper functions 
+        uint32_t *imm_errPtr = null;
+        imem(current_PC, out->insnbits, *imm_errPtr); // out->insnbits
+        // getting opcode from insnbits
+        uint32_t opCode = bitfield(out->insnbits, 21, 11);
+        if(opCode == 0x7c2) {
+            out->op = OP_LDUR;
+        } else if (opCode == 0x7c0) {
+            out->op = OP_STUR;
+        } else if (opCode == 0x558) {
+            out->op = OP_ADDS_RR;
+        } else if (opCode == 0x758) {
+            out->op = OP_CMP_RR;
+        } else if (opCode == 0x551) {
+            out->op = OP_MVN;
+        } else if (opCode == 0x550) {
+            out->op = OP_ORR_RR;
+        } else if (opCode == 0x650) {
+            out->op = OP_EOR_RR;
+        } else if (opCode == 0x750) {
+            out->op = OP_TST_RR;
+        } else if (opCode == 0x6b2) {
+            out->op = OP_RET;
+        } else if (opCode == 0x6a8) {
+            out->op = OP_NOP;
+        } else if (opCode == 0x6a2) {
+            out->op = OP_HLT;
+        } else {
+            uint32_t b23to31 = bitfield(out->insnbits, 23, 9);
+            if(b23to31 == 0x1e5) {
+                out->op = OP_MOVK;
+            } else if (b23to31 == 0x1a5) {
+                out->op = OP_MOVZ;
+            }
+            else {
+                uint32_t b22to31 = bitfield(out->insnbits, 22, 10);
+                if(b22to31 == 0x34d) {
+                    out->op = OP_UBFM;
+                } else if (b22to31 == 0x24d) {
+                    out->op = OP_ASR;
+                } else if (b22to31 == 0x244) {
+                    out->op = OP_ADD_RI;
+                } else if (b22to31 == 0x344) {
+                    out->op = OP_SUB_RI;
+                } else {
+                    uint32_t b26to31 = bitfield(out->insnbits, 26, 6);
+                    if(b26to31 == 0x5) {
+                        out->op = OP_B;
+                    } else if(b26to31 == 0x25) {
+                        out->op = OP_BL;
+                    } else {
+                        uint32_t b24to31 = bitfield(out->insnbits, 24, 8);
+                        if(b24to31 == 0x54) {
+                            out->op = OP_B_COND;
+                        } else {
+                            if( (out->insnbits & 0x80000000) >> 31 == 1 && bitfield(out->insnbits, 24, 5) == 0x10) {
+                                out->op = OP_ADRP;
+                            } else {
+                                out->op = OP_ERROR;
+                            }
+                        }
+                    }
+                }
+            }
+        }
+        fix_instr_aliases(out->insnbits, out->op);
+        predict_PC(current_PC, out->insnbits, out->op, in->pred_PC, out->seq_succ_PC);
     }
     
     // We do not recommend modifying the below code.

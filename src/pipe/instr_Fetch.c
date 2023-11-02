@@ -164,7 +164,7 @@ comb_logic_t fetch_instr(f_instr_impl_t *in, d_instr_impl_t *out) {
         uint32_t *imm_errPtr;
         imem(current_PC, &(out->insnbits), &imm_errPtr); // out->insnbits
         // getting opcode from insnbits
-        uint32_t opCode = bitfield_u32(out->insnbits, 21, 11);
+        uint32_t opCode = bitfield_u32(out->insnbits, 21, 11); //out->op = itable[11bits]
         if(opCode == 0x7c2) {
             out->op = OP_LDUR;
         } else if (opCode == 0x7c0) {

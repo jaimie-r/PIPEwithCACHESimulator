@@ -247,6 +247,9 @@ comb_logic_t decode_instr(d_instr_impl_t *in, x_instr_impl_t *out) {
 
     //helpers
     generate_DXMW_control(in->op, &D_sigs, &(out->X_sigs), &(out->M_sigs), &(out->W_sigs));
+    if(in->insnbits == 0 && in->op!=OP_NOP){
+        out->W_sigs.w_enable = true;
+    }
     extract_immval(in->insnbits, in->op, &(out->val_imm));
     extract_regs(in->insnbits, in->op, &src1, &src2, &(out->dst));
 

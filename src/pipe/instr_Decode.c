@@ -40,30 +40,17 @@ extern int64_t W_wval;
 static comb_logic_t 
 generate_DXMW_control(opcode_t op,
                       d_ctl_sigs_t *D_sigs, x_ctl_sigs_t *X_sigs, m_ctl_sigs_t *M_sigs, w_ctl_sigs_t *W_sigs) {
-    if(op == OP_MOVK || op == OP_MOVZ || op == OP_ADRP || op == OP_ADD_RI || op == OP_SUB_RI || op == OP_MVN || op == OP_LSL || op == OP_LSR || 
-        op == OP_UBFM || op == OP_ASR){
-            W_sigs->w_enable = 1;
-    } else if (op==OP_LDUR){
-        M_sigs->dmem_read = 1;
-        W_sigs->wval_sel = 1;
-        W_sigs->w_enable = 1;
-    } else if (op==OP_STUR) {
-        D_sigs->src2_sel = 1;
-        M_sigs->dmem_write = 1;
-    } else if (op==OP_ADDS_RR || op==OP_SUBS_RR || op==OP_ANDS_RR){
-        X_sigs->valb_sel = 1;
-        X_sigs->set_CC = 1;
-        W_sigs->w_enable = 1;
-    } else if (op == OP_CMP_RR || op == OP_TST_RR){
-        X_sigs->valb_sel = 1;
-        X_sigs->set_CC = 1;
-    } else if (op==OP_ORR_RR || op == OP_EOR_RR){
-        X_sigs->valb_sel = 1;
-        W_sigs->w_enable = 1;
-    } else if (op==OP_BL){
-        W_sigs->dst_sel = 1;
-        W_sigs->w_enable = 1;
-    } 
+
+    D_sigs->src2_sel = (op == OP_STUR);
+    X_sigs->set_CC = (op == OP_ADDS_RR || op == OP_SUBS_RR || op == OP_CMP_RR || op == OP_ANDS_RR || op == OP_TST_RR);
+    X_sigs->valb_sel = (op == OP_ADDS_RR || op == OP_SUBS_RR || op == OP_CMP_RR || op == OP_ANDS_RR || op == OP_TST_RR || op == OP_ORR_RR || op == OP_EOR_RR || op == OP_MVN);
+    M_sigs->dmem_read = op == OP_LDUR;
+    M_sigs->dmem_write = op == OP_STUR;
+    W_sigs->dst_sel = op == OP_BL;
+    W_sigs->wval_sel = op == OP_LDUR;
+    W_sigs->w_enable = (op == OP_LDUR || op == OP_MOVK || op == OP_MOVZ || op == OP_ADRP || op == OP_ADD_RI || 
+        op == OP_ADDS_RR || op == OP_SUB_RI || op == OP_SUBS_RR || op == OP_MVN || op == OP_ORR_RR || op == OP_EOR_RR ||
+        op == OP_ANDS_RR || op == OP_LSL || op == OP_LSR || op == OP_ASR || op == OP_BL);
     return;
 }
 
@@ -186,6 +173,7 @@ copy_w_ctl_sigs(w_ctl_sigs_t *dest, w_ctl_sigs_t *src) {
 comb_logic_t
 extract_regs(uint32_t insnbits, opcode_t op, 
              uint8_t *src1, uint8_t *src2, uint8_t *dst) {
+    
     if(op==OP_LDUR){
         //M
         *src1 = bitfield_u32(insnbits, 5, 5);
@@ -194,6 +182,7 @@ extract_regs(uint32_t insnbits, opcode_t op,
         //M
         *src1 = bitfield_u32(insnbits, 5, 5);
         *src2 = bitfield_u32(insnbits, 0, 5);
+        *dst = bitfield_u32(insnbits, 0, 5);
     } else if (op==OP_MOVK || op==OP_MOVZ || op==OP_ADRP){
         //I1 + I2
         *dst = bitfield_u32(insnbits, 0, 5);
@@ -260,8 +249,13 @@ comb_logic_t decode_instr(d_instr_impl_t *in, x_instr_impl_t *out) {
     generate_DXMW_control(in->op, &D_sigs, &(out->X_sigs), &(out->M_sigs), &(out->W_sigs));
     extract_immval(in->insnbits, in->op, &(out->val_imm));
     extract_regs(in->insnbits, in->op, &src1, &src2, &(out->dst));
+
+    if(out->X_sigs.valb_sel || out->op == OP_ADD_RI){
+        out->val_b = out->val_imm;
+    }
+
     decide_alu_op(in->op, &(out->ALU_op));
-    regfile(src1, src2, out->dst, W_wval,(out->W_sigs).w_enable, &(out->val_a), &(out->val_b));
+    regfile(src1, src2, W_out->dst, W_wval, W_out->W_sigs.w_enable, &(out->val_a), &(out->val_b));
 
     //adrp fix 
     if(in->op == OP_ADRP){

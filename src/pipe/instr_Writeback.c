@@ -37,6 +37,8 @@ comb_logic_t wback_instr(w_instr_impl_t *in) {
 
     if(in->W_sigs.w_enable){
         W_wval = (in->W_sigs.wval_sel ? in->val_mem : in->val_ex);
+    } else {
+        W_wval = 0;
     }
     
     return;

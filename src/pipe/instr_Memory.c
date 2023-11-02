@@ -35,18 +35,18 @@ extern comb_logic_t copy_w_ctl_sigs(w_ctl_sigs_t *, w_ctl_sigs_t *);
 
 comb_logic_t memory_instr(m_instr_impl_t *in, w_instr_impl_t *out) {
     in->op = out->op;
-    in->m->print_op = out->w->print_op;
-    in->m->val_ex = out->w->val_ex;
-    in->m->status = out->w->status;
-    copy_w_ctl_sigs(out->w->W_sigs, in->m->M_sigs);
-    in->m->dst = out->w->dst;
+    in->print_op = out->print_op;
+    in->val_ex = out->val_ex;
+    in->status = out->status;
+    copy_w_ctl_sigs(&(out->W_sigs), &(in->M_sigs));
+    in->dst = out->dst;
     // questions:
     // seq succ PC?
     // cond_holds? for when branching is wrong? outputs from execute, not used here
     // where to change status?
     // can we use github desktop, edit on github desktop and then run on vs code, git pull --rebase will merge if there's no conflict
-    if(in->m->dmem_read || in->m->dmem_write) {
-        dmem(in->m->val_b, in->m->val_ex, in->m->M_sigs->dmem_read, in->m->M_sigs->dmem_write); 
+    if(in->M_sigs.dmem_read || in->M_sigs.dmem_write) {
+        dmem(in->val_b, in->val_ex, in->M_sigs.dmem_read, in->M_sigs.dmem_write); 
     }
     return;
 }

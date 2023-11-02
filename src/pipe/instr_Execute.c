@@ -48,10 +48,10 @@ comb_logic_t execute_instr(x_instr_impl_t *in, m_instr_impl_t *out) {
     out->status = in->status;
     
     //MUX2 
-    uint64_t valb = (in->X_sigs.valb_sel ? in->val_imm : in->val_b);
+    uint64_t *valb = (in->X_sigs.valb_sel ? in->val_b : in->val_imm);
 
     //ALU
-    alu(in->val_a, valb, in->val_hw, in->op, in->X_sigs.set_CC, in->cond, &(out->val_ex), &X_condval);
+    alu(in->val_a, valb, in->val_hw, in->ALU_op, in->X_sigs.set_CC, in->cond, &(out->val_ex), &X_condval);
     out->cond_holds = X_condval;
 
     return;

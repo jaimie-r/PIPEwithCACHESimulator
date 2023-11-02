@@ -50,7 +50,7 @@ generate_DXMW_control(opcode_t op,
     } else if (op==OP_STUR) {
         D_sigs->src2_sel = 1;
         M_sigs->dmem_write = 1;
-    } else if (op==OP_ADDS_RR || op==OP_SUBS_RR){
+    } else if (op==OP_ADDS_RR || op==OP_SUBS_RR || op==OP_ANDS_RR){
         X_sigs->valb_sel = 1;
         X_sigs->set_CC = 1;
         W_sigs->w_enable = 1;
@@ -101,6 +101,7 @@ extract_immval(uint32_t insnbits, opcode_t op, int64_t *imm) {
             *imm = bitfield_u32(insnbits, 10, 12);
             break;
         default:
+            *imm = 0;
             break;
     }
     return;
@@ -214,15 +215,15 @@ extract_regs(uint32_t insnbits, opcode_t op,
     
     //check if src1, src2, or dst are the sp
     //if they are, and the opperation isn't allowed to access the sp, change it to xzr
-    if(*src1 == SP_NUM) {
-        *src1 = XZR_NUM;
-    }
-    if(*src2 == SP_NUM) {
-        *src2 = XZR_NUM;
-    }
-    if(*dst == SP_NUM) {
-        *dst = XZR_NUM;
-    }
+    // if(*src1 == SP_NUM && !(op==OP_ADD_RI || op==OP_SUB_RI)) {
+    //     *src1 = XZR_NUM;
+    // }
+    // if(*src2 == SP_NUM) {
+    //     *src2 = XZR_NUM;
+    // }
+    // if(*dst == SP_NUM) {
+    //     *dst = XZR_NUM;
+    // }
 
     return;
 }
@@ -256,11 +257,11 @@ comb_logic_t decode_instr(d_instr_impl_t *in, x_instr_impl_t *out) {
     uint8_t *src2;
 
     //helpers
-    generate_DXMW_control(in->op, D_sigs, &(out->X_sigs), &(out->M_sigs), &(out->W_sigs));
+    generate_DXMW_control(in->op, &D_sigs, &(out->X_sigs), &(out->M_sigs), &(out->W_sigs));
     extract_immval(in->insnbits, in->op, &(out->val_imm));
-    extract_regs(in->insnbits, in->op, src1, src2, &(out->dst));
+    extract_regs(in->insnbits, in->op, &src1, &src2, &(out->dst));
     decide_alu_op(in->op, &(out->ALU_op));
-    regfile(src1, src2, out->dst, W_wval,(out->W_sigs).w_enable, &(out->val_a), &(out->val_b));
+    regfile(*src1, *src2, out->dst, W_wval,(out->W_sigs).w_enable, &(out->val_a), &(out->val_b));
 
     //adrp fix 
     if(in->op == OP_ADRP){

@@ -36,7 +36,7 @@ extern int64_t W_wval;
 comb_logic_t wback_instr(w_instr_impl_t *in) {
 
     if(in->W_sigs.w_enable){
-        W_wval = (in->W_sigs.wval_sel ? in->val_ex : in->val_mem);
+        W_wval = (in->W_sigs.wval_sel ? in->val_mem : in->val_ex);
     }
     
     return;

@@ -46,7 +46,9 @@ select_PC(uint64_t pred_PC,                                     // The predicted
         return;
     }
     // Modify starting here.
-    if(!M_cond_val) { // correction from b.cond, not sure if this is supposed to be ! or not
+    if(!seq_succ){
+        *current_PC = pred_PC;
+    } else if(!M_cond_val) { // correction from b.cond, not sure if this is supposed to be ! or not
         *current_PC = seq_succ;
     } else if (D_opcode == OP_RET) { // ret
         *current_PC = val_a;
@@ -83,14 +85,13 @@ predict_PC(uint64_t current_PC, uint32_t insnbits, opcode_t op,
         *predicted_PC = upper12;
         *seq_succ = current_PC & ~0xFFF;
     } else {
-        *seq_succ = current_PC + 32;
-
+        *seq_succ = current_PC + 4; //changed from +32 to +4
         if (op == OP_B || op == OP_BL ) {
-            *predicted_PC = insnbits & 0x3ffffff;
+            *predicted_PC = bitfield_u32(insnbits, 0, 26);
         } else if(op == OP_B_COND) {
-            *predicted_PC = (insnbits & 0xffffe0) >> 4;
+            *predicted_PC = bitfield_u32(insnbits, 5, 19);
         } else {
-            *predicted_PC = current_PC + 32;
+            *predicted_PC = current_PC + 4; //same as above
         }
     }
 
@@ -144,7 +145,7 @@ void fix_instr_aliases(uint32_t insnbits, opcode_t *op) {
 comb_logic_t fetch_instr(f_instr_impl_t *in, d_instr_impl_t *out) {
     bool imem_err = 0;
     uint64_t current_PC;
-    select_PC(in->pred_PC, D_out->op, X_out->val_a, M_out->op, M_out->cond_holds, M_out->seq_succ_PC, &current_PC);
+    select_PC(in->pred_PC, X_out->op, X_out->val_a, M_out->op, M_out->cond_holds, M_out->seq_succ_PC, &current_PC);
     /* 
      * Students: This case is for generating HLT instructions
      * to stop the pipeline. Only write your code in the **else** case. 
@@ -160,8 +161,8 @@ comb_logic_t fetch_instr(f_instr_impl_t *in, d_instr_impl_t *out) {
         //get isnbits
         //get opcode from those bits
         //helper functions 
-        uint32_t *imm_errPtr = NULL;
-        imem(current_PC, &(out->insnbits), *imm_errPtr); // out->insnbits
+        uint32_t *imm_errPtr;
+        imem(current_PC, &(out->insnbits), &imm_errPtr); // out->insnbits
         // getting opcode from insnbits
         uint32_t opCode = bitfield_u32(out->insnbits, 21, 11);
         if(opCode == 0x7c2) {
@@ -225,7 +226,7 @@ comb_logic_t fetch_instr(f_instr_impl_t *in, d_instr_impl_t *out) {
             }
         }
         fix_instr_aliases(out->insnbits, &(out->op));
-        predict_PC(current_PC, out->insnbits, out->op, &(in->pred_PC), &(out->seq_succ_PC));
+        predict_PC(current_PC, out->insnbits, out->op, &F_PC, &(out->seq_succ_PC));
         out->print_op = out->op;
         out->this_PC = current_PC;
     }

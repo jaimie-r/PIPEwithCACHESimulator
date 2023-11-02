@@ -63,7 +63,7 @@ generate_DXMW_control(opcode_t op,
     } else if (op==OP_BL){
         W_sigs->dst_sel = 1;
         W_sigs->w_enable = 1;
-    }
+    } 
     return;
 }
 
@@ -261,7 +261,7 @@ comb_logic_t decode_instr(d_instr_impl_t *in, x_instr_impl_t *out) {
     extract_immval(in->insnbits, in->op, &(out->val_imm));
     extract_regs(in->insnbits, in->op, &src1, &src2, &(out->dst));
     decide_alu_op(in->op, &(out->ALU_op));
-    regfile(*src1, *src2, out->dst, W_wval,(out->W_sigs).w_enable, &(out->val_a), &(out->val_b));
+    regfile(src1, src2, out->dst, W_wval,(out->W_sigs).w_enable, &(out->val_a), &(out->val_b));
 
     //adrp fix 
     if(in->op == OP_ADRP){

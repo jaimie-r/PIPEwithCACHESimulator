@@ -21,6 +21,8 @@ extern mem_status_t dmem_status;
 
 extern uint64_t F_PC;
 
+extern uint32_t bitfield_u32(int32_t src, unsigned frompos, unsigned width);
+
 //TODO: fetch instr, select pc, predict pc, fix instr aliases
 
 /*
@@ -159,9 +161,9 @@ comb_logic_t fetch_instr(f_instr_impl_t *in, d_instr_impl_t *out) {
         //get opcode from those bits
         //helper functions 
         uint32_t *imm_errPtr = NULL;
-        imem(current_PC, out->insnbits, *imm_errPtr); // out->insnbits
+        imem(current_PC, &(out->insnbits), *imm_errPtr); // out->insnbits
         // getting opcode from insnbits
-        uint32_t opCode = bitfield(out->insnbits, 21, 11);
+        uint32_t opCode = bitfield_u32(out->insnbits, 21, 11);
         if(opCode == 0x7c2) {
             out->op = OP_LDUR;
         } else if (opCode == 0x7c0) {
@@ -185,14 +187,14 @@ comb_logic_t fetch_instr(f_instr_impl_t *in, d_instr_impl_t *out) {
         } else if (opCode == 0x6a2) {
             out->op = OP_HLT;
         } else {
-            uint32_t b23to31 = bitfield(out->insnbits, 23, 9);
+            uint32_t b23to31 = bitfield_u32(out->insnbits, 23, 9);
             if(b23to31 == 0x1e5) {
                 out->op = OP_MOVK;
             } else if (b23to31 == 0x1a5) {
                 out->op = OP_MOVZ;
             }
             else {
-                uint32_t b22to31 = bitfield(out->insnbits, 22, 10);
+                uint32_t b22to31 = bitfield_u32(out->insnbits, 22, 10);
                 if(b22to31 == 0x34d) {
                     out->op = OP_UBFM;
                 } else if (b22to31 == 0x24d) {
@@ -202,17 +204,17 @@ comb_logic_t fetch_instr(f_instr_impl_t *in, d_instr_impl_t *out) {
                 } else if (b22to31 == 0x344) {
                     out->op = OP_SUB_RI;
                 } else {
-                    uint32_t b26to31 = bitfield(out->insnbits, 26, 6);
+                    uint32_t b26to31 = bitfield_u32(out->insnbits, 26, 6);
                     if(b26to31 == 0x5) {
                         out->op = OP_B;
                     } else if(b26to31 == 0x25) {
                         out->op = OP_BL;
                     } else {
-                        uint32_t b24to31 = bitfield(out->insnbits, 24, 8);
+                        uint32_t b24to31 = bitfield_u32(out->insnbits, 24, 8);
                         if(b24to31 == 0x54) {
                             out->op = OP_B_COND;
                         } else {
-                            if( (out->insnbits & 0x80000000) >> 31 == 1 && bitfield(out->insnbits, 24, 5) == 0x10) {
+                            if( (out->insnbits & 0x80000000) >> 31 == 1 && bitfield_u32(out->insnbits, 24, 5) == 0x10) {
                                 out->op = OP_ADRP;
                             } else {
                                 out->op = OP_ERROR;
@@ -222,8 +224,8 @@ comb_logic_t fetch_instr(f_instr_impl_t *in, d_instr_impl_t *out) {
                 }
             }
         }
-        fix_instr_aliases(out->insnbits, out->op);
-        predict_PC(current_PC, out->insnbits, out->op, in->pred_PC, out->seq_succ_PC);
+        fix_instr_aliases(out->insnbits, &(out->op));
+        predict_PC(current_PC, out->insnbits, out->op, &(in->pred_PC), &(out->seq_succ_PC));
     }
     
     // We do not recommend modifying the below code.
@@ -238,4 +240,4 @@ comb_logic_t fetch_instr(f_instr_impl_t *in, d_instr_impl_t *out) {
     }
     out->status = in->status;
     return;
-}
+}                                                                                                                       

@@ -48,7 +48,7 @@ comb_logic_t execute_instr(x_instr_impl_t *in, m_instr_impl_t *out) {
     uint64_t valb = (in->X_sigs.valb_sel ? in->val_imm : in->val_b);
 
     //ALU
-    alu(in->val_a, valb, in->val_hw, in->op, in->X_sigs.set_CC, in->cond, out->val_ex, X_condval);
+    alu(in->val_a, valb, in->val_hw, in->op, in->X_sigs.set_CC, in->cond, &(out->val_ex), &X_condval);
     out->cond_holds = X_condval;
 
     return;

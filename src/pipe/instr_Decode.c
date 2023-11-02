@@ -86,9 +86,10 @@ extract_immval(uint32_t insnbits, opcode_t op, int64_t *imm) {
             *imm = bitfield_u32(insnbits, 5, 16);
             break;
         case OP_ADRP:
-            uint32_t immlow= bitfield_s64(insnbits, 29, 2);
+            *imm = *imm;
+            int64_t immlow = bitfield_s64(insnbits, 29, 2);
             immlow <<= 12;
-            uint32_t immhigh = bitfield_s64(insnbits, 5, 19);
+            int64_t immhigh = bitfield_s64(insnbits, 5, 19);
             immhigh <<= 14;
             *imm = immlow + immhigh;
             break;
@@ -103,7 +104,7 @@ extract_immval(uint32_t insnbits, opcode_t op, int64_t *imm) {
         default:
             break;
     }
-    return imm;
+    return;
 }
 
 /*
@@ -157,7 +158,7 @@ decide_alu_op(opcode_t op, alu_op_t *ALU_op) {
             *ALU_op = PASS_A_OP;
             break;
     }
-    return *ALU_op;
+    return;
 }
 
 /*
@@ -249,8 +250,8 @@ comb_logic_t decode_instr(d_instr_impl_t *in, x_instr_impl_t *out) {
     //helpers
     generate_DXMW_control(in->op, D_sigs, &(out->X_sigs), &(out->M_sigs), &(out->W_sigs));
     extract_immval(in->insnbits, in->op, &(out->val_imm));
-    extract_regs(in->insnbits, in->op, src1, src2, out->dst);
-    decide_alu_op(in->op, out->ALU_op);
+    extract_regs(in->insnbits, in->op, src1, src2, &(out->dst));
+    decide_alu_op(in->op, &(out->ALU_op));
     regfile(src1, src2, out->dst, W_wval,(out->W_sigs).w_enable, &(out->val_a), &(out->val_b));
 
     //adrp fix 

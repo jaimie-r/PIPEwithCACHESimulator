@@ -38,7 +38,7 @@ comb_logic_t memory_instr(m_instr_impl_t *in, w_instr_impl_t *out) {
     in->print_op = out->print_op;
     in->val_ex = out->val_ex;
     in->status = out->status;
-    copy_w_ctl_sigs(&(out->W_sigs), &(in->M_sigs));
+    copy_w_ctl_sigs(&(out->W_sigs), &(in->W_sigs));
     in->dst = out->dst;
     // questions:
     // seq succ PC?
@@ -46,9 +46,8 @@ comb_logic_t memory_instr(m_instr_impl_t *in, w_instr_impl_t *out) {
     // where to change status?
     // can we use github desktop, edit on github desktop and then run on vs code, git pull --rebase will merge if there's no conflict
     bool *dmem_error = false;
-    uint64_t *dmem_thing;
     if(in->M_sigs.dmem_read || in->M_sigs.dmem_write) {
-        dmem(in->val_b, in->val_ex, in->M_sigs.dmem_read, in->M_sigs.dmem_write, dmem_thing, dmem_error); 
+        dmem(in->val_b, in->val_ex, in->M_sigs.dmem_read, in->M_sigs.dmem_write, &(out->val_b), dmem_error); 
     }
     return;
 }

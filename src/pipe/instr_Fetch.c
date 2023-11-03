@@ -24,6 +24,8 @@ extern uint64_t F_PC;
 extern uint32_t bitfield_u32(int32_t src, unsigned frompos, unsigned width);
 
 //TODO: fetch instr, select pc, predict pc, fix instr aliases
+// bin/test-se -v 1 do
+// ^ runs all tests cases 
 
 /*
  * Select PC logic.

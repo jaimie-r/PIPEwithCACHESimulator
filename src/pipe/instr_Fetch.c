@@ -78,11 +78,7 @@ predict_PC(uint64_t current_PC, uint32_t insnbits, opcode_t op,
     }
     // Modify starting here.
     if(op == OP_ADRP) {
-        *seq_succ = current_PC & ~0xFFF;
-        int32_t upper12 = insnbits & 0xFFFFE0;
-        upper12 >>= 8;
-        upper12 &= ~0xFFF;
-        *predicted_PC = upper12;
+        *predicted_PC = current_PC + 4;
         *seq_succ = current_PC & ~0xFFF;
     } else {
         *seq_succ = current_PC + 4; //changed from +32 to +4

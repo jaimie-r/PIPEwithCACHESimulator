@@ -229,6 +229,7 @@ comb_logic_t fetch_instr(f_instr_impl_t *in, d_instr_impl_t *out) {
         // }
         fix_instr_aliases(out->insnbits, &(out->op));
         predict_PC(current_PC, out->insnbits, out->op, &F_PC, &(out->seq_succ_PC));
+        F_PC = current_PC + 4;
         out->print_op = out->op;
         out->this_PC = current_PC;
     }

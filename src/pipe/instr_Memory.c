@@ -41,6 +41,7 @@ comb_logic_t memory_instr(m_instr_impl_t *in, w_instr_impl_t *out) {
     copy_w_ctl_sigs(&(out->W_sigs), &(in->W_sigs));
     out->dst = in->dst;
     out->val_b = in->val_b;
+
     // questions:
     // seq succ PC?
     // cond_holds? for when branching is wrong? outputs from execute, not used here
@@ -48,7 +49,7 @@ comb_logic_t memory_instr(m_instr_impl_t *in, w_instr_impl_t *out) {
     // can we use github desktop, edit on github desktop and then run on vs code, git pull --rebase will merge if there's no conflict
     bool *dmem_error = false;
     if(in->M_sigs.dmem_read || in->M_sigs.dmem_write) {
-        dmem(in->val_ex, in->val_b, in->M_sigs.dmem_read, in->M_sigs.dmem_write, &(out->val_mem), dmem_error); 
+        dmem(in->val_ex, in->val_b, in->M_sigs.dmem_read, in->M_sigs.dmem_write, &(out->val_mem), &dmem_error); 
     }
     return;
 }

@@ -48,7 +48,7 @@ select_PC(uint64_t pred_PC,                                     // The predicted
     // Modify starting here.
     if(!seq_succ){
         *current_PC = pred_PC;
-    } else if(!M_cond_val) { // correction from b.cond, not sure if this is supposed to be ! or not
+    } else if(!M_cond_val && M_opcode == OP_B_COND) { // correction from b.cond, not sure if this is supposed to be ! or not
         *current_PC = seq_succ;
     } else if (D_opcode == OP_RET) { // ret
         *current_PC = val_a;
@@ -79,6 +79,11 @@ predict_PC(uint64_t current_PC, uint32_t insnbits, opcode_t op,
     // Modify starting here.
     if(op == OP_ADRP) {
         *predicted_PC = current_PC + 4;
+        // *seq_succ = current_PC & ~0xFFF;
+        // int32_t upper12 = insnbits & 0xFFFFE0;
+        // upper12 >>= 8;
+        // upper12 &= ~0xFFF;
+        // *predicted_PC = upper12;
         *seq_succ = current_PC & ~0xFFF;
     } else {
         *seq_succ = current_PC + 4; //changed from +32 to +4
@@ -167,69 +172,8 @@ comb_logic_t fetch_instr(f_instr_impl_t *in, d_instr_impl_t *out) {
         uint32_t bits = bitfield_u32(out->insnbits, 21, 11);
         uint32_t opCode = itable[bits]; //out->op = itable[11bits]
         out->op = opCode;
-        // if(opCode == 0x7c2) {
-        //     out->op = OP_LDUR;
-        // } else if (opCode == 0x7c0) {
-        //     out->op = OP_STUR;
-        // } else if (opCode == 0x558) {
-        //     out->op = OP_ADDS_RR;
-        // } else if (opCode == 0x758) {
-        //     out->op = OP_CMP_RR;
-        // } else if (opCode == 0x551) {
-        //     out->op = OP_MVN;
-        // } else if (opCode == 0x550) {
-        //     out->op = OP_ORR_RR;
-        // } else if (opCode == 0x650) {
-        //     out->op = OP_EOR_RR;
-        // } else if (opCode == 0x750) {
-        //     out->op = OP_TST_RR;
-        // } else if (opCode == 0x6b2) {
-        //     out->op = OP_RET;
-        // } else if (opCode == 0x6a8) {
-        //     out->op = OP_NOP;
-        // } else if (opCode == 0x6a2) {
-        //     out->op = OP_HLT;
-        // } else {
-        //     uint32_t b23to31 = bitfield_u32(out->insnbits, 23, 9);
-        //     if(b23to31 == 0x1e5) {
-        //         out->op = OP_MOVK;
-        //     } else if (b23to31 == 0x1a5) {
-        //         out->op = OP_MOVZ;
-        //     }
-        //     else {
-        //         uint32_t b22to31 = bitfield_u32(out->insnbits, 22, 10);
-        //         if(b22to31 == 0x34d) {
-        //             out->op = OP_UBFM;
-        //         } else if (b22to31 == 0x24d) {
-        //             out->op = OP_ASR;
-        //         } else if (b22to31 == 0x244) {
-        //             out->op = OP_ADD_RI;
-        //         } else if (b22to31 == 0x344) {
-        //             out->op = OP_SUB_RI;
-        //         } else {
-        //             uint32_t b26to31 = bitfield_u32(out->insnbits, 26, 6);
-        //             if(b26to31 == 0x5) {
-        //                 out->op = OP_B;
-        //             } else if(b26to31 == 0x25) {
-        //                 out->op = OP_BL;
-        //             } else {
-        //                 uint32_t b24to31 = bitfield_u32(out->insnbits, 24, 8);
-        //                 if(b24to31 == 0x54) {
-        //                     out->op = OP_B_COND;
-        //                 } else {
-        //                     if( (out->insnbits & 0x80000000) >> 31 == 1 && bitfield_u32(out->insnbits, 24, 5) == 0x10) {
-        //                         out->op = OP_ADRP;
-        //                     } else {
-        //                         out->op = OP_ERROR;
-        //                     }
-        //                 }
-        //             }
-        //         }
-        //     }
-        // }
         fix_instr_aliases(out->insnbits, &(out->op));
         predict_PC(current_PC, out->insnbits, out->op, &F_PC, &(out->seq_succ_PC));
-        F_PC = current_PC + 4;
         out->print_op = out->op;
         out->this_PC = current_PC;
     }

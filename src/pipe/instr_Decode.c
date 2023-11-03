@@ -304,9 +304,9 @@ comb_logic_t decode_instr(d_instr_impl_t *in, x_instr_impl_t *out) {
     decide_alu_op(in->op, &(out->ALU_op));
     extract_immval(in->insnbits, in->op, &(out->val_imm));
 
-    if(out->X_sigs.valb_sel){
-        out->val_b = out->val_imm;
-    } 
+    // if(out->X_sigs.valb_sel){
+    //     out->val_b = out->val_imm;
+    // } 
 
     //adrp fix 
     if(in->op == OP_ADRP){

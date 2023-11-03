@@ -27,6 +27,9 @@ extern uint32_t bitfield_u32(int32_t src, unsigned frompos, unsigned width);
 // bin/test-se -v 1 do
 // ^ runs all tests cases 
 
+// exceptions/simple/ldur
+// exceptions/simple/stur
+
 /*
  * Select PC logic.
  * STUDENT TO-DO:
@@ -114,25 +117,42 @@ predict_PC(uint64_t current_PC, uint32_t insnbits, opcode_t op,
 
 static
 void fix_instr_aliases(uint32_t insnbits, opcode_t *op) {
-    uint32_t b22to31 = bitfield_u32(insnbits, 22, 10);
-    uint32_t b21to31 = bitfield_u32(insnbits, 21, 11);
-    uint32_t b10to15 = bitfield_u32(insnbits, 10, 6);
-    uint32_t b16to21 = bitfield_u32(insnbits, 16, 6);
     uint32_t b0to4 = bitfield_u32(insnbits, 0, 5);
-    if(b22to31 == 0x34d) { // UBFM
-        if(b10to15 >= b16to21) {
+    if(*op == OP_SUBS_RR){
+        if(b0to4 == 0x1f){
+            *op = OP_CMP_RR;
+        }
+    } else if (*op == OP_ANDS_RR){
+        if(b0to4 == 0x1f){
+            *op = OP_TST_RR;
+        }
+    } else if (*op == OP_UBFM){
+        uint32_t b10to15 = bitfield_u32(insnbits, 10, 6);
+        if(b10to15 == 0x3f){
             *op = OP_LSR;
         } else {
             *op = OP_LSL;
         }
-    } else if (b21to31 == 0x758) { // CMP
-        if(b0to4 != 0x1f) {
-            *op = OP_SUBS_RR;
-        } 
-    } else if (b21to31 == 0x758) { // TST
-        *op = OP_ANDS_RR;
     }
-    return;
+    // uint32_t b22to31 = bitfield_u32(insnbits, 22, 10);
+    // uint32_t b21to31 = bitfield_u32(insnbits, 21, 11);
+    // uint32_t b10to15 = bitfield_u32(insnbits, 10, 6);
+    // uint32_t b16to21 = bitfield_u32(insnbits, 16, 6);
+    // uint32_t b0to4 = bitfield_u32(insnbits, 0, 5);
+    // if(b22to31 == 0x34d) { // UBFM
+    //     if(b10to15 >= b16to21) {
+    //         *op = OP_LSR;
+    //     } else {
+    //         *op = OP_LSL;
+    //     }
+    // } else if (b21to31 == 0x758) { // CMP
+    //     if(b0to4 != 0x1f) {
+    //         *op = OP_SUBS_RR;
+    //     } 
+    // } else if (b21to31 == 0x758) { // TST
+    //     *op = OP_ANDS_RR;
+    // }
+    // return;
 }
 
 /*

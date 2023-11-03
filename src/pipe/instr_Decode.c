@@ -81,11 +81,13 @@ extract_immval(uint32_t insnbits, opcode_t op, int64_t *imm) {
             break;
         case OP_ADD_RI:
         case OP_SUB_RI:
-        case OP_LSL:
-        case OP_LSR:
         case OP_UBFM:
         case OP_ASR:
             *imm = bitfield_u32(insnbits, 10, 12);
+            break;
+        case OP_LSL:
+        case OP_LSR:
+            *imm = 63 - bitfield_u32(insnbits, 10, 6);
             break;
         case OP_B:
         case OP_BL:
@@ -185,7 +187,7 @@ extract_regs(uint32_t insnbits, opcode_t op,
     if(op!=OP_NOP){
         if(op==OP_B || op==OP_B_COND || op==OP_HLT || op==OP_BL){ //op==OP_NOP?
             //*src1 = 18;
-        } else if (op==OP_MOVZ){
+        } else if (op==OP_MOVZ || op==OP_MVN){
             *src1 = XZR_NUM;
         } else if (op==OP_MOVK){
             *src1 = bitfield_u32(insnbits, 0, 5);
@@ -209,7 +211,7 @@ extract_regs(uint32_t insnbits, opcode_t op,
             } else if (op==OP_SUB_RI ){
                 *src2 = *src1;
             }
-            if(op==OP_MVN && *src2==SP_NUM){
+            if(op==OP_MVN && (*src2==SP_NUM)){
                 *src2 = XZR_NUM;
             }
         }

@@ -87,6 +87,13 @@ extract_immval(uint32_t insnbits, opcode_t op, int64_t *imm) {
         case OP_ASR:
             *imm = bitfield_u32(insnbits, 10, 12);
             break;
+        case OP_B:
+        case OP_BL:
+            *imm = bitfield_u32(insnbits, 0, 26);
+            break;
+        case OP_B_COND:
+            *imm = bitfield_u32(insnbits, 5, 19);
+            break;
         default:
             *imm = 0;
             break;
@@ -186,36 +193,47 @@ extract_regs(uint32_t insnbits, opcode_t op,
     }
     
     //src2
-    if(op)
-
-
-    if(op==OP_LDUR){
-        //M
-        *src1 = bitfield_u32(insnbits, 5, 5);
-        *dst = bitfield_u32(insnbits, 0, 5);
-    } else if (op==OP_STUR){
-        //M
-        *src1 = bitfield_u32(insnbits, 5, 5);
-        *src2 = bitfield_u32(insnbits, 0, 5);
-        *dst = bitfield_u32(insnbits, 0, 5);
-    } else if (op==OP_MOVK || op==OP_MOVZ || op==OP_ADRP){
-        //I1 + I2
-        *dst = bitfield_u32(insnbits, 0, 5);
-    } else if (op==OP_ADD_RI || op==OP_SUB_RI || op==OP_LSL || 
-                op==OP_LSR || op==OP_UBFM || op==OP_ASR){
-        //RI
-        *src1 = bitfield_u32(insnbits, 5, 5);
-        *dst = bitfield_u32(insnbits, 0, 5);
-    } else if (op==OP_ADDS_RR || op==OP_SUBS_RR || op==OP_CMP_RR || op==OP_MVN || 
+    if (op==OP_ADDS_RR || op==OP_SUBS_RR || op==OP_CMP_RR || 
             op==OP_ORR_RR || op==OP_EOR_RR ||op==OP_ANDS_RR || op==OP_TST_RR){
-        //RR
-        *src1 = bitfield_u32(insnbits, 5, 5);
+        *src2 = bitfield_u32(insnbits, 0, 5);
+    } else {
         *src2 = bitfield_u32(insnbits, 16, 5);
-        *dst = bitfield_u32(insnbits, 0, 5);   
-    } else if (op==OP_RET){
-        //B3
-        *src1 = bitfield_u32(insnbits, 5, 5);
     }
+
+    //dst
+    if(op==OP_RET || op==OP_BL){
+        *dst = 30;
+    } else {
+        *dst = bitfield_u32(insnbits, 0, 5);
+    }
+
+    // if(op==OP_LDUR){
+    //     //M
+    //     *src1 = bitfield_u32(insnbits, 5, 5);
+    //     *dst = bitfield_u32(insnbits, 0, 5);
+    // } else if (op==OP_STUR){
+    //     //M
+    //     *src1 = bitfield_u32(insnbits, 5, 5);
+    //     *src2 = bitfield_u32(insnbits, 0, 5);
+    //     *dst = bitfield_u32(insnbits, 0, 5);
+    // } else if (op==OP_MOVK || op==OP_MOVZ || op==OP_ADRP){
+    //     //I1 + I2
+    //     *dst = bitfield_u32(insnbits, 0, 5);
+    // } else if (op==OP_ADD_RI || op==OP_SUB_RI || op==OP_LSL || 
+    //             op==OP_LSR || op==OP_UBFM || op==OP_ASR){
+    //     //RI
+    //     *src1 = bitfield_u32(insnbits, 5, 5);
+    //     *dst = bitfield_u32(insnbits, 0, 5);
+    // } else if (op==OP_ADDS_RR || op==OP_SUBS_RR || op==OP_CMP_RR || op==OP_MVN || 
+    //         op==OP_ORR_RR || op==OP_EOR_RR ||op==OP_ANDS_RR || op==OP_TST_RR){
+    //     //RR
+    //     *src1 = bitfield_u32(insnbits, 5, 5);
+    //     *src2 = bitfield_u32(insnbits, 16, 5);
+    //     *dst = bitfield_u32(insnbits, 0, 5);   
+    // } else if (op==OP_RET){
+    //     //B3
+    //     *src1 = bitfield_u32(insnbits, 5, 5);
+    // }
     
     //check if src1, src2, or dst are the sp
     //if they are, and the opperation isn't allowed to access the sp, change it to xzr
@@ -268,7 +286,7 @@ comb_logic_t decode_instr(d_instr_impl_t *in, x_instr_impl_t *out) {
     extract_immval(in->insnbits, in->op, &(out->val_imm));
     extract_regs(in->insnbits, in->op, &src1, &src2, &(out->dst));
 
-    if(out->X_sigs.valb_sel || out->op == OP_ADD_RI){
+    if(out->X_sigs.valb_sel){
         out->val_b = out->val_imm;
     }
 
@@ -283,6 +301,10 @@ comb_logic_t decode_instr(d_instr_impl_t *in, x_instr_impl_t *out) {
     //hw
     if(in->op == OP_MOVK || in->op == OP_MOVZ){
         out->val_hw = bitfield_u32(in->insnbits, 21, 2);
+    }
+
+    if(in->op == OP_BL){
+        out->val_a = out->seq_succ_PC;
     }
 
     // cond

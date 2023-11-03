@@ -203,8 +203,11 @@ extract_regs(uint32_t insnbits, opcode_t op,
             // }
             if(op==OP_STUR){
                 *src2 = bitfield_u32(insnbits, 0, 5);
-            } else {
+            } else if (op==OP_ADDS_RR || op==OP_SUBS_RR || op==OP_CMP_RR || op==OP_MVN || 
+             op==OP_ORR_RR || op==OP_EOR_RR ||op==OP_ANDS_RR || op==OP_TST_RR){
                 *src2 = bitfield_u32(insnbits, 16, 5);
+            } else if (op==OP_SUB_RI ){
+                *src2 = *src1;
             }
             if(op==OP_MVN && *src2==SP_NUM){
                 *src2 = XZR_NUM;
@@ -287,22 +290,23 @@ comb_logic_t decode_instr(d_instr_impl_t *in, x_instr_impl_t *out) {
 
     //local vars 
     d_ctl_sigs_t *D_sigs;
-    uint8_t *src1;
-    uint8_t *src2;
+    uint8_t *src1 = XZR_NUM;
+    uint8_t *src2 = XZR_NUM;
 
     //helpers
     generate_DXMW_control(in->op, &D_sigs, &(out->X_sigs), &(out->M_sigs), &(out->W_sigs));
-    // if(in->insnbits == 0 && in->op!=OP_NOP){
-    //     out->W_sigs.w_enable = true
-    // }
+    //below helps pass basic test
+    if(in->insnbits == 0 && in->op!=OP_NOP){
+        out->W_sigs.w_enable = true;
+    }
+    extract_regs(in->insnbits, in->op, &src1, &src2, &(out->dst));
     regfile(src1, src2, W_out->dst, W_wval, W_out->W_sigs.w_enable, &(out->val_a), &(out->val_b));
     decide_alu_op(in->op, &(out->ALU_op));
-    extract_regs(in->insnbits, in->op, &src1, &src2, &(out->dst));
     extract_immval(in->insnbits, in->op, &(out->val_imm));
 
     if(out->X_sigs.valb_sel){
         out->val_b = out->val_imm;
-    }
+    } 
 
     //adrp fix 
     if(in->op == OP_ADRP){
@@ -311,7 +315,10 @@ comb_logic_t decode_instr(d_instr_impl_t *in, x_instr_impl_t *out) {
 
     //hw
     if(in->op == OP_MOVK || in->op == OP_MOVZ){
-        out->val_hw = bitfield_u32(in->insnbits, 21, 2);
+        out->val_hw = bitfield_u32(in->insnbits, 21, 2) << 4;
+        out->val_b = 0;
+    } else {
+        out->val_hw = 0;
     }
 
     if(in->op == OP_BL){

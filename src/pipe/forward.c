@@ -17,6 +17,7 @@ comb_logic_t forward_reg(uint8_t D_src1, uint8_t D_src2, uint8_t X_dst, uint8_t 
                  bool M_w_enable, bool W_w_enable,
                  uint64_t *val_a, uint64_t *val_b) {
     /* Students: Implement Below */
+    
 
     //wtf are M_val_mem / W_val_mem supposed to be used for // M_wval_sel / W_wval_sel
     

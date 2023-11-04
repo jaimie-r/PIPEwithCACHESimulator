@@ -264,6 +264,7 @@ comb_logic_t decode_instr(d_instr_impl_t *in, x_instr_impl_t *out) {
     }
     extract_regs(in->insnbits, in->op, &src1, &src2, &(out->dst));
     regfile(src1, src2, W_out->dst, W_wval, W_out->W_sigs.w_enable, &(out->val_a), &(out->val_b));
+    // diagram shows forward aftder reg file ()
     decide_alu_op(in->op, &(out->ALU_op));
     extract_immval(in->insnbits, in->op, &(out->val_imm));
 

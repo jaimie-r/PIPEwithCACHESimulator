@@ -49,17 +49,27 @@ void pipe_control_stage(proc_stage_t stage, bool bubble, bool stall) {
 
 bool check_ret_hazard(opcode_t D_opcode) {
     /* Students: Implement Below */
+    //D_out->op == OP_RET return true
+    //stall F, bubble D 
     return false;
 }
 
 bool check_mispred_branch_hazard(opcode_t X_opcode, bool X_condval) {
     /* Students: Implement Below */
+    //x_out->op == OP_B_COND && !X_condval 
+    //or ret in D (squash ret)
+    //bubble D, bubble X 
     return false;
 }
 
 bool check_load_use_hazard(opcode_t D_opcode, uint8_t D_src1, uint8_t D_src2,
                            opcode_t X_opcode, uint8_t X_dst) {
     /* Students: Implement Below */
+    //*issue only when it's back to back load use
+    //if x is ldur to one of the sources
+    //xout->op == OP_LDUR && (x.out->dst == src1 || x.out->dst == src2)
+    //or if ret in D && dst == X30 
+    //stall F, stall D, bubble X 
     return false;
 }
 
@@ -67,11 +77,39 @@ comb_logic_t handle_hazards(opcode_t D_opcode, uint8_t D_src1, uint8_t D_src2,
                             opcode_t X_opcode, uint8_t X_dst, bool X_condval) {
     /* Students: Change the below code IN WEEK TWO -- do not touch for week one */
     bool f_stall = F_out->status == STAT_HLT || F_out->status == STAT_INS;
-    pipe_control_stage(S_FETCH, false, f_stall);
-    pipe_control_stage(S_DECODE, false, false);
-    pipe_control_stage(S_EXECUTE, false, false);
-    pipe_control_stage(S_MEMORY, false, false);
-    pipe_control_stage(S_WBACK, false, false);
+    if(check_ret_hazard(D_opcode)){
+        //stall F, bubble D
+        pipe_control_stage(S_FETCH, false, true);
+        pipe_control_stage(S_DECODE, true, false);
+        pipe_control_stage(S_EXECUTE, false, false);
+        pipe_control_stage(S_MEMORY, false, false);
+        pipe_control_stage(S_WBACK, false, false);
+    } else if (check_mispred_branch_hazard(X_opcode, X_condval)){
+        //bubble D, bubble X
+        pipe_control_stage(S_FETCH, false, false);
+        pipe_control_stage(S_DECODE, true, false);
+        pipe_control_stage(S_EXECUTE, true, false);
+        pipe_control_stage(S_MEMORY, false, false);
+        pipe_control_stage(S_WBACK, false, false);
+    } else if (check_load_use_hazard(D_opcode, D_src1, D_src2, X_opcode, X_dst)){
+        //stall F, stall D, bubble X 
+        pipe_control_stage(S_FETCH, false, true);
+        pipe_control_stage(S_DECODE, false, true);
+        pipe_control_stage(S_EXECUTE, true, false);
+        pipe_control_stage(S_MEMORY, false, false);
+        pipe_control_stage(S_WBACK, false, false);
+    }else {
+        pipe_control_stage(S_FETCH, false, f_stall);
+        pipe_control_stage(S_DECODE, false, false);
+        pipe_control_stage(S_EXECUTE, false, false);
+        pipe_control_stage(S_MEMORY, false, false);
+        pipe_control_stage(S_WBACK, false, false);
+    }
+
+    //exceptions?,,,,
+    //if x_out status != AOK || BUB
+    //if W_in status != AOK || BUB
+    //if W_out status != AOK || BUB 
 }
 
 

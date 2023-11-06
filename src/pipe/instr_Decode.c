@@ -25,6 +25,7 @@ extern mem_status_t dmem_status;
 
 extern int64_t W_wval;
 
+
 //TODO: decode instr
 
 /*
@@ -266,6 +267,13 @@ comb_logic_t decode_instr(d_instr_impl_t *in, x_instr_impl_t *out) {
     decide_alu_op(in->op, &(out->ALU_op));
     extract_immval(in->insnbits, in->op, &(out->val_imm));
 
+
+    //call forward reg 
+    forward_reg(src1, src2, out->dst, M_in->dst, W_in->dst,
+                 X_in->val_b, M_in->val_ex, M_in->val_b, W_in->val_ex,
+                 W_in->val_mem, M_in->W_sigs.wval_sel, W_in->W_sigs.wval_sel, X_in->W_sigs.w_enable,
+                 M_in->W_sigs.w_enable, W_in->W_sigs.w_enable,
+                &(out->val_a), &(out->val_b));
     // if(out->X_sigs.valb_sel){
     //     out->val_b = out->val_imm;
     // } 
@@ -343,13 +351,6 @@ comb_logic_t decode_instr(d_instr_impl_t *in, x_instr_impl_t *out) {
                 break;
         }
     }
-
-    //call forward reg 
-    foward_reg(src1, src2, out->dst, M_in->dst, W_in->dst,
-                 X_in->val_b, M_in->val_ex, M_in->val_b, W_in->val_ex,
-                 W_in->val_mem, M_in->W_sigs.wval_sel, W_in->W_sigs.wval_sel, X_in->W_sigs.w_enable,
-                 M_in->W_sigs.w_enable, W_in->W_sigs.w_enable,
-                &(out->val_a), &(out->val_b));
 
     return;
 }

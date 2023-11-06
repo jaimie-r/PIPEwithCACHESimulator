@@ -218,7 +218,7 @@ extract_regs(uint32_t insnbits, opcode_t op,
         }
 
         //dst
-        if(op==OP_TST_RR || op==OP_CMP_RR){
+        if(op==OP_TST_RR || op==OP_CMP_RR || op==OP_B_COND){
             *dst = XZR_NUM;
         } else if (op!= OP_RET){
             *dst = X_in->W_sigs.dst_sel ? 30 : bitfield_u32(insnbits, 0, 5);
@@ -276,7 +276,7 @@ comb_logic_t decode_instr(d_instr_impl_t *in, x_instr_impl_t *out) {
                  //bool M_w_enable, bool W_w_enable,
                  //uint64_t *val_a, uint64_t *val_b
     forward_reg(src1, src2, out->dst, M_in->dst, W_in->dst,
-                 X_in->val_b, M_in->val_ex, M_in->val_b, W_in->val_ex,
+                 M_in->val_ex, W_in->val_ex, M_in->val_b, W_wval,
                  W_in->val_mem, M_in->W_sigs.wval_sel, W_in->W_sigs.wval_sel, X_in->W_sigs.w_enable,
                  M_in->W_sigs.w_enable, W_in->W_sigs.w_enable,
                 &(out->val_a), &(out->val_b));

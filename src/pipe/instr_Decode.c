@@ -270,6 +270,11 @@ comb_logic_t decode_instr(d_instr_impl_t *in, x_instr_impl_t *out) {
 
 
     //call forward reg 
+    //uint8_t D_src1, uint8_t D_src2, uint8_t X_dst, uint8_t M_dst, uint8_t W_dst, 
+                //uint64_t X_val_ex, uint64_t M_val_ex, uint64_t M_val_mem, uint64_t W_val_ex,
+                 //uint64_t W_val_mem, bool M_wval_sel, bool W_wval_sel, bool X_w_enable,
+                 //bool M_w_enable, bool W_w_enable,
+                 //uint64_t *val_a, uint64_t *val_b
     forward_reg(src1, src2, out->dst, M_in->dst, W_in->dst,
                  X_in->val_b, M_in->val_ex, M_in->val_b, W_in->val_ex,
                  W_in->val_mem, M_in->W_sigs.wval_sel, W_in->W_sigs.wval_sel, X_in->W_sigs.w_enable,

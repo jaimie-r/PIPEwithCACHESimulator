@@ -76,6 +76,8 @@ bool check_load_use_hazard(opcode_t D_opcode, uint8_t D_src1, uint8_t D_src2,
 comb_logic_t handle_hazards(opcode_t D_opcode, uint8_t D_src1, uint8_t D_src2, 
                             opcode_t X_opcode, uint8_t X_dst, bool X_condval) {
     /* Students: Change the below code IN WEEK TWO -- do not touch for week one */
+    //
+    //in f/d/x/m/w do we in each stage check for what to do based on status? ex stall/bubble
     bool f_stall = F_out->status == STAT_HLT || F_out->status == STAT_INS;
     if(check_ret_hazard(D_opcode)){
         //stall F, bubble D

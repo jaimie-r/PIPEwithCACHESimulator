@@ -224,46 +224,6 @@ extract_regs(uint32_t insnbits, opcode_t op,
         }
     }
 
-    // if(op==OP_LDUR){
-    //     //M
-    //     *src1 = bitfield_u32(insnbits, 5, 5);
-    //     *dst = bitfield_u32(insnbits, 0, 5);
-    // } else if (op==OP_STUR){
-    //     //M
-    //     *src1 = bitfield_u32(insnbits, 5, 5);
-    //     *src2 = bitfield_u32(insnbits, 0, 5);
-    //     *dst = bitfield_u32(insnbits, 0, 5);
-    // } else if (op==OP_MOVK || op==OP_MOVZ || op==OP_ADRP){
-    //     //I1 + I2
-    //     *dst = bitfield_u32(insnbits, 0, 5);
-    // } else if (op==OP_ADD_RI || op==OP_SUB_RI || op==OP_LSL || 
-    //             op==OP_LSR || op==OP_UBFM || op==OP_ASR){
-    //     //RI
-    //     *src1 = bitfield_u32(insnbits, 5, 5);
-    //     *dst = bitfield_u32(insnbits, 0, 5);
-    // } else if (op==OP_ADDS_RR || op==OP_SUBS_RR || op==OP_CMP_RR || op==OP_MVN || 
-    //         op==OP_ORR_RR || op==OP_EOR_RR ||op==OP_ANDS_RR || op==OP_TST_RR){
-    //     //RR
-    //     *src1 = bitfield_u32(insnbits, 5, 5);
-    //     *src2 = bitfield_u32(insnbits, 16, 5);
-    //     *dst = bitfield_u32(insnbits, 0, 5);   
-    // } else if (op==OP_RET){
-    //     //B3
-    //     *src1 = bitfield_u32(insnbits, 5, 5);
-    // }
-    
-    //check if src1, src2, or dst are the sp
-    //if they are, and the opperation isn't allowed to access the sp, change it to xzr
-    // if(*src1 == SP_NUM && !(op==OP_ADD_RI || op==OP_SUB_RI)) {
-    //     *src1 = XZR_NUM;
-    // }
-    // if(*src2 == SP_NUM) {
-    //     *src2 = XZR_NUM;
-    // }
-    // if(*dst == SP_NUM) {
-    //     *dst = XZR_NUM;
-    // }
-
     return;
 }
 
@@ -384,6 +344,12 @@ comb_logic_t decode_instr(d_instr_impl_t *in, x_instr_impl_t *out) {
         }
     }
 
+    //call forward reg 
+    foward_reg(in->src1, uint8_t D_src2, uint8_t X_dst, uint8_t M_dst, uint8_t W_dst,
+                 uint64_t X_val_ex, uint64_t M_val_ex, uint64_t M_val_mem, uint64_t W_val_ex,
+                 uint64_t W_val_mem, bool M_wval_sel, bool W_wval_sel, bool X_w_enable,
+                 bool M_w_enable, bool W_w_enable,
+                 uint64_t *val_a, uint64_t *val_b)
 
     return;
 }

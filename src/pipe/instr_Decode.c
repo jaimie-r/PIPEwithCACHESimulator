@@ -66,7 +66,7 @@ extract_immval(uint32_t insnbits, opcode_t op, int64_t *imm) {
     switch(op) {
         case OP_LDUR:
         case OP_STUR:
-            *imm = bitfield_u32(insnbits, 12, 9);
+            *imm = bitfield_s64(insnbits, 12, 9);
             break;
         case OP_MOVK:
         case OP_MOVZ:
@@ -74,9 +74,9 @@ extract_immval(uint32_t insnbits, opcode_t op, int64_t *imm) {
             break;
         case OP_ADRP:
             *imm = *imm;
-            int64_t immlow = bitfield_s64(insnbits, 29, 2);
+            int64_t immlow = bitfield_u32(insnbits, 29, 2);
             immlow <<= 12;
-            int64_t immhigh = bitfield_s64(insnbits, 5, 19);
+            int64_t immhigh = bitfield_u32(insnbits, 5, 19);
             immhigh <<= 14;
             *imm = immlow + immhigh;
             break;
@@ -87,8 +87,10 @@ extract_immval(uint32_t insnbits, opcode_t op, int64_t *imm) {
             *imm = bitfield_u32(insnbits, 10, 12);
             break;
         case OP_LSL:
-        case OP_LSR:
             *imm = 63 - bitfield_u32(insnbits, 10, 6);
+            break;
+        case OP_LSR:
+            *imm = bitfield_u32(insnbits, 10, 6);
             break;
         case OP_B:
         case OP_BL:
@@ -225,6 +227,18 @@ extract_regs(uint32_t insnbits, opcode_t op,
         } else if (op!= OP_RET){
             *dst = X_in->W_sigs.dst_sel ? 30 : bitfield_u32(insnbits, 0, 5);
         }
+    }
+
+    if (*src1 == SP_NUM && !(op == OP_LDUR || op == OP_STUR || op == OP_ADD_RI || op == OP_SUB_RI)) {
+        *src1 = XZR_NUM;
+    }
+
+    if (*src2 == SP_NUM) {
+        *src2 = XZR_NUM;
+    }
+
+    if(*dst == SP_NUM && (op != OP_ADD_RI || op != OP_SUB_RI)) {
+        *dst = XZR_NUM;
     }
 
     return;

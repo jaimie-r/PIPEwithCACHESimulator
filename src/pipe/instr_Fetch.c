@@ -97,7 +97,7 @@ predict_PC(uint64_t current_PC, uint32_t insnbits, opcode_t op,
             int64_t offset = imm26 << 2;
             *predicted_PC = current_PC + offset;
         } else if(op == OP_B_COND) {
-            uint64_t imm19 = bitfield_u32(insnbits, 5, 19);
+            uint64_t imm19 = bitfield_s64(insnbits, 5, 19);
             uint64_t offset = imm19 << 2;
             *predicted_PC = current_PC + offset;
         } else {

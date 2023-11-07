@@ -186,8 +186,8 @@ extract_regs(uint32_t insnbits, opcode_t op,
     
     //src1
     if(op!=OP_NOP){
-        if(op==OP_B || op==OP_B_COND || op==OP_HLT || op==OP_BL || op==OP_B_COND){ //op==OP_NOP?
-            //*src1 = 18;
+        if(op==OP_B || op==OP_B_COND || op==OP_HLT || op==OP_BL){ //op==OP_NOP?
+             //*src1 = 18;
         } else if (op==OP_MOVZ || op==OP_MVN){
             *src1 = XZR_NUM;
         } else if (op==OP_MOVK){
@@ -221,7 +221,7 @@ extract_regs(uint32_t insnbits, opcode_t op,
         if(op==OP_TST_RR || op==OP_CMP_RR){
             *dst = XZR_NUM;
         } else if (op==OP_B_COND) {
-            *dst = bitfield_s64(insnbits, 5, 19);
+            *dst = bitfield_u32(insnbits, 5, 19);
         } else if (op!= OP_RET){
             *dst = X_in->W_sigs.dst_sel ? 30 : bitfield_u32(insnbits, 0, 5);
         }
@@ -261,11 +261,11 @@ comb_logic_t decode_instr(d_instr_impl_t *in, x_instr_impl_t *out) {
     //helpers
     generate_DXMW_control(in->op, &D_sigs, &(out->X_sigs), &(out->M_sigs), &(out->W_sigs));
     //below helps pass basic test
-    if(in->insnbits == 0 && in->op!=OP_NOP){
+    if((in->insnbits == 0 && in->op!=OP_NOP) || in->status == STAT_INS){
         out->W_sigs.w_enable = true;
     }
     extract_regs(in->insnbits, in->op, &src1, &src2, &(out->dst));
-    regfile(src1, src2, W_out->dst, W_wval, W_out->W_sigs.w_enable, &(out->val_a), &(out->val_b));
+    regfile(src1, src2, W_out->dst, W_wval, (W_out->W_sigs.w_enable && W_out->status == STAT_AOK), &(out->val_a), &(out->val_b));
     // diagram shows forward aftder reg file ()
     decide_alu_op(in->op, &(out->ALU_op));
     extract_immval(in->insnbits, in->op, &(out->val_imm));

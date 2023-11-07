@@ -17,6 +17,14 @@
 extern machine_t guest;
 extern mem_status_t dmem_status;
 
+//alu/hazard/shift
+//exceptions/hazard/bad_insn_1
+//exceptions/hazard/bad_insn_2
+//exceptions/hazard/bad_insn_3
+//exceptions/hazard/bad_insn_4
+//applications/hazard/13factorial
+//applications/hazard/80thfib
+
 /* Use this method to actually bubble/stall a pipeline stage.
  * Call it in handle_hazards(). Do not modify this code. */
 void pipe_control_stage(proc_stage_t stage, bool bubble, bool stall) {
@@ -78,11 +86,11 @@ comb_logic_t handle_hazards(opcode_t D_opcode, uint8_t D_src1, uint8_t D_src2,
     /* Students: Change the below code IN WEEK TWO -- do not touch for week one */
     //
     //in f/d/x/m/w do we in each stage check for what to do based on status? ex stall/bubble
-    bool f_stall = F_out->status == STAT_HLT || F_out->status == STAT_INS;
-    bool d_stall = D_out->status == STAT_HLT || D_out->status == STAT_INS;
-    bool x_stall = X_out->status == STAT_HLT || X_out->status == STAT_INS;
-    bool m_stall = M_out->status == STAT_HLT || M_out->status == STAT_INS;
-    bool w_stall = W_out->status == STAT_HLT || W_out->status == STAT_INS;
+    bool w_stall = W_out->status == STAT_HLT; //|| W_out->status == STAT_INS;
+    bool m_stall = M_out->status == STAT_HLT || w_stall;//|| M_out->status == STAT_INS || w_stall;
+    bool x_stall = X_out->status == STAT_HLT || X_out->status == STAT_INS || m_stall;//|| X_out->status == STAT_INS || m_stall;
+    bool d_stall = D_out->status == STAT_HLT || D_out->status == STAT_INS || x_stall;//|| D_out->status == STAT_INS || x_stall;
+    bool f_stall = F_out->status == STAT_HLT  || d_stall;
     if(check_ret_hazard(D_opcode)){
         //stall F, bubble D
         pipe_control_stage(S_FETCH, false, true);
@@ -105,10 +113,10 @@ comb_logic_t handle_hazards(opcode_t D_opcode, uint8_t D_src1, uint8_t D_src2,
         pipe_control_stage(S_MEMORY, false, false);
         pipe_control_stage(S_WBACK, false, false);
     }else {
-        pipe_control_stage(S_FETCH, false, (f_stall || d_stall || x_stall || m_stall || w_stall));
-        pipe_control_stage(S_DECODE, false, (d_stall || x_stall || m_stall || w_stall));
-        pipe_control_stage(S_EXECUTE, false, (x_stall || m_stall || w_stall));
-        pipe_control_stage(S_MEMORY, false, (m_stall || w_stall));
+        pipe_control_stage(S_FETCH, false, (f_stall));
+        pipe_control_stage(S_DECODE, false, (d_stall));
+        pipe_control_stage(S_EXECUTE, false, (x_stall));
+        pipe_control_stage(S_MEMORY, false, (m_stall));
         pipe_control_stage(S_WBACK, false, w_stall);
     }
 

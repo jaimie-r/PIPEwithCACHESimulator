@@ -94,9 +94,9 @@ extract_immval(uint32_t insnbits, opcode_t op, int64_t *imm) {
         case OP_BL:
             *imm = bitfield_u32(insnbits, 0, 26);
             break;
-        case OP_B_COND:
-            *imm = bitfield_s64(insnbits, 5, 19);
-            break;
+        // case OP_B_COND:
+        //     *imm = 0;
+        //     break;
         default:
             *imm = 0;
             break;
@@ -220,6 +220,8 @@ extract_regs(uint32_t insnbits, opcode_t op,
         //dst
         if(op==OP_TST_RR || op==OP_CMP_RR){
             *dst = XZR_NUM;
+        } else if (op==OP_B_COND) {
+            *dst = bitfield_s64(insnbits, 5, 19);
         } else if (op!= OP_RET){
             *dst = X_in->W_sigs.dst_sel ? 30 : bitfield_u32(insnbits, 0, 5);
         }
@@ -275,10 +277,10 @@ comb_logic_t decode_instr(d_instr_impl_t *in, x_instr_impl_t *out) {
                  //uint64_t W_val_mem, bool M_wval_sel, bool W_wval_sel, bool X_w_enable,
                  //bool M_w_enable, bool W_w_enable,
                  //uint64_t *val_a, uint64_t *val_b
-    forward_reg(src1, src2, out->dst, M_in->dst, W_in->dst,
-                 M_in->val_ex, M_in->val_ex, W_in->val_mem, W_in->val_ex,
-                 W_in->val_mem, M_in->W_sigs.wval_sel, W_in->W_sigs.wval_sel, X_in->W_sigs.w_enable,
-                 M_in->W_sigs.w_enable, W_in->W_sigs.w_enable,
+    forward_reg(src1, src2, X_out->dst, M_out->dst, W_out->dst,
+                 M_in->val_ex, M_out->val_ex, W_in->val_mem, W_out->val_ex,
+                 W_out->val_mem, M_out->W_sigs.wval_sel, W_out->W_sigs.wval_sel, X_out->W_sigs.w_enable,
+                 M_out->W_sigs.w_enable, W_out->W_sigs.w_enable,
                 &(out->val_a), &(out->val_b));
     // if(out->X_sigs.valb_sel){
     //     out->val_b = out->val_imm;

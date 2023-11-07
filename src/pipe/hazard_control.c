@@ -18,10 +18,6 @@ extern machine_t guest;
 extern mem_status_t dmem_status;
 
 //alu/hazard/shift
-//exceptions/hazard/bad_insn_1
-//exceptions/hazard/bad_insn_2
-//exceptions/hazard/bad_insn_3
-//exceptions/hazard/bad_insn_4
 //applications/hazard/13factorial
 //applications/hazard/80thfib
 

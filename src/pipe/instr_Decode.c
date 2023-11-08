@@ -87,10 +87,10 @@ extract_immval(uint32_t insnbits, opcode_t op, int64_t *imm) {
             *imm = bitfield_u32(insnbits, 10, 12);
             break;
         case OP_LSL:
-            *imm = 63 - bitfield_u32(insnbits, 10, 6);
+            *imm = 64 - bitfield_u32(insnbits, 16, 6);
             break;
         case OP_LSR:
-            *imm = bitfield_u32(insnbits, 10, 6);
+            *imm = bitfield_u32(insnbits, 16, 6);
             break;
         case OP_B:
         case OP_BL:

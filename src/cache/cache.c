@@ -23,6 +23,20 @@
 
 #define ADDRESS_LENGTH 64
 
+//bin/test-csim 1 do 
+
+//test cases w/ respective A B C'
+//gdb --args
+//bin/csim -t testcases/cache/yi2.trace -A 1 -B 2 -C 4 
+//bin/csim -t testcases/cache/yi.trace -A 2 -B 16 -C 512
+//bin/csim -t testcases/cache/yi.trace -A 8 -B 8 -C 64
+//bin/csim -t testcases/cache/dave.trace -A 1 -B 16 -C 64
+//bin/csim -t testcases/cache/trans.trace -A 1 -B 8 -C 32
+//bin/csim -t testcases/cache/trans.trace -A 2 -B 8 -C 64
+//bin/csim -t testcases/cache/trans.trace -A 4 -B 8 -C 128
+//bin/csim -t testcases/cache/trans.trace -A 1 -B 32 -C 1024
+//bin/csim -t testcases/cache/long.trace -A 1 -B 32 -C 1024
+
 /* Counters used to record cache statistics in printSummary().
    test-cache uses these numbers to verify correctness of the cache. */
 
@@ -136,6 +150,17 @@ void free_cache(cache_t *cache) {
  */
 cache_line_t *get_line(cache_t *cache, uword_t addr) {
     /* your implementation */
+    __uint32_t S = cache->C / (cache->A * cache->B);
+    __uint32_t t = addr >> (S + cache->B);
+    __uint32_t I = (addr >> cache->B) & ((1 << _log(S)) - 1);
+    cache_line_t *line = cache->sets[I].lines;
+    for(int i = 0; i < cache->A; i++) {
+        if(line->tag == t && line->valid) {
+            return line;
+        } else {
+            line++;
+        }
+    }
     return NULL;
 }
 
@@ -145,7 +170,19 @@ cache_line_t *get_line(cache_t *cache, uword_t addr) {
  */
 cache_line_t *select_line(cache_t *cache, uword_t addr) {
     /* your implementation */
-    return NULL;
+    __uint32_t S = cache->C / (cache->A * cache->B);
+    __uint32_t I = (addr >> cache->B) & ((1 << _log(S)) - 1);
+    uword_t lowest = LONG_MAX;
+    cache_line_t *line = cache->sets[I].lines;
+    cache_line_t *selection = line;
+    for(int i = 0; i < cache->A; i++) {
+        if(line->lru < lowest){
+            lowest = line->lru;
+            selection = line; // check pointers maybe?
+        }
+        line++;
+    }
+    return selection;
 }
 
 /*  STUDENT TO-DO:
@@ -154,7 +191,18 @@ cache_line_t *select_line(cache_t *cache, uword_t addr) {
  */
 bool check_hit(cache_t *cache, uword_t addr, operation_t operation) {
     /* your implementation */
-    return false;
+    //call get_line to determine if the line exists or not 
+    next_lru++;
+    cache_line_t *line = get_line(cache, addr);
+    if(line) {
+        line->dirty = (operation == WRITE);
+        line->lru = next_lru;
+        hit_count++;
+        return true;
+    } else {
+        miss_count++;
+        return false;
+    }
 }
 
 /*  STUDENT TO-DO:
@@ -165,7 +213,40 @@ evicted_line_t *handle_miss(cache_t *cache, uword_t addr, operation_t operation,
     evicted_line_t *evicted_line = malloc(sizeof(evicted_line_t));
     evicted_line->data = (byte_t *) calloc(cache->B, sizeof(byte_t));
     /* your implementation */
-    return NULL;
+    __uint32_t S = cache->C / (cache->A * cache->B);
+    __uint32_t t = addr >> (S + cache->B);
+    __uint32_t I = (addr >> cache->B) & ((1 << _log(S)) - 1);
+    bool empty = false;
+    //search for empty line 
+    cache_line_t *line = cache->sets[I].lines;
+    for(int i = 0; i < cache->A; i++) {
+        if(!line->valid) { // found empty line
+            empty = true;
+        }
+    }
+    //cache is full; evict
+    if(!empty) {
+        line = select_line(cache, addr); 
+        //fill in evicted_line info 
+        evicted_line->valid = line->valid;
+        evicted_line->dirty = line->dirty;
+        evicted_line->addr = addr;
+        evicted_line->data = incoming_data;
+    }
+    //fetch mem block from M to $ + place in avail. line
+    //update valid + tag + dirty + lru
+    if(evicted_line->dirty == 1){
+        dirty_eviction_count++;
+    } else {
+        clean_eviction_count++;
+    }
+    line->valid = 1;
+    line->dirty = (operation == WRITE);
+    line->data = incoming_data;
+    line->tag = t;
+    line->lru = next_lru;
+
+    return evicted_line;
 }
 
 /* STUDENT TO-DO:
@@ -174,6 +255,21 @@ evicted_line_t *handle_miss(cache_t *cache, uword_t addr, operation_t operation,
  */
 void get_word_cache(cache_t *cache, uword_t addr, word_t *dest) {
     /* Your implementation */
+    __uint32_t S = cache->C / (cache->A * cache->B);
+    __uint32_t t = addr >> (S + cache->B);
+    __uint32_t I = (addr >> cache->B) & ((1 << _log(S)) - 1);
+    __uint32_t f = addr & ((1 << _log(cache->B)) - 1);
+    cache_line_t *line = cache->sets[I].lines;
+    int i = 0;
+    bool done = false;
+    while (i < cache->A && !done) {
+        if(line->tag == t) {
+            dest = (word_t *)(line->data + f);
+            done = true;
+        }
+        i++;
+    }
+
 }
 
 /* STUDENT TO-DO:
@@ -182,6 +278,21 @@ void get_word_cache(cache_t *cache, uword_t addr, word_t *dest) {
  */
 void set_word_cache(cache_t *cache, uword_t addr, word_t val) {
     /* Your implementation */
+    __uint32_t S = cache->C / (cache->A * cache->B);
+    __uint32_t t = addr >> (S + cache->B);
+    __uint32_t I = (addr >> cache->B) & ((1 << _log(S)) - 1);
+    //__uint32_t f = addr & ((1 << _log(cache->B)) - 1);
+    cache_line_t *line = cache->sets[I].lines;
+    int i = 0;
+    bool done = false;
+    while (i < cache->A && !done) {
+        if(line->tag == t) {
+            // byte_t *temp = line->data + f;
+            // temp = (byte_t *)val;
+            // done = true;
+        }
+        i++;
+    }
 }
 
 /*

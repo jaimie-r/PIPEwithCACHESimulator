@@ -65,6 +65,12 @@ static size_t _log(size_t x) {
   return result;
 }
 
+//helper method for getting bitfields (unsigned!!)
+unsigned
+bitfield(int32_t src, unsigned frompos, unsigned width) {
+    return (((unsigned)src >> frompos) & ((1 << width) - 1));
+}
+
 /*
  * Initialize the cache according to specified arguments
  * Called by cache-runner so do not modify the function signature
@@ -150,15 +156,14 @@ void free_cache(cache_t *cache) {
  */
 cache_line_t *get_line(cache_t *cache, uword_t addr) {
     /* your implementation */
-    __uint32_t S = cache->C / (cache->A * cache->B);
-    __uint32_t t = addr >> (S + cache->B);
-    __uint32_t I = (addr >> cache->B) & ((1 << _log(S)) - 1);
-    cache_line_t *line = cache->sets[I].lines;
+    __uint32_t s = _log(cache->C / (cache->A * cache->B));
+    size_t b = _log(cache->B);
+    __uint32_t t = addr >> (s + b);
+    __uint32_t I = (addr >> b) & ((1 << s) - 1);
+    cache_set_t *cset = &cache->sets[I];
     for(int i = 0; i < cache->A; i++) {
-        if(line->tag == t && line->valid) {
-            return line;
-        } else {
-            line++;
+        if(cset->lines[i].tag == t && cset->lines[i].valid) {
+            return &cset->lines[i];
         }
     }
     return NULL;
@@ -171,16 +176,15 @@ cache_line_t *get_line(cache_t *cache, uword_t addr) {
 cache_line_t *select_line(cache_t *cache, uword_t addr) {
     /* your implementation */
     __uint32_t S = cache->C / (cache->A * cache->B);
-    __uint32_t I = (addr >> cache->B) & ((1 << _log(S)) - 1);
-    uword_t lowest = LONG_MAX;
-    cache_line_t *line = cache->sets[I].lines;
-    cache_line_t *selection = line;
+    __uint32_t I = (addr >> _log(cache->B)) & ((1 << _log(S)) - 1);
+    uword_t lowest = next_lru;
+    cache_set_t *cset = &cache->sets[I];
+    cache_line_t *selection;
     for(int i = 0; i < cache->A; i++) {
-        if(line->lru < lowest){
-            lowest = line->lru;
-            selection = line; // check pointers maybe?
+        if(cset->lines[i].lru <= lowest){
+            lowest = cset->lines[i].lru;
+            selection = &cset->lines[i]; // check pointers maybe?
         }
-        line++;
     }
     return selection;
 }
@@ -192,12 +196,12 @@ cache_line_t *select_line(cache_t *cache, uword_t addr) {
 bool check_hit(cache_t *cache, uword_t addr, operation_t operation) {
     /* your implementation */
     //call get_line to determine if the line exists or not 
-    next_lru++;
     cache_line_t *line = get_line(cache, addr);
     if(line) {
         line->dirty = (operation == WRITE);
-        line->lru = next_lru;
         hit_count++;
+        next_lru++;        
+        line->lru = next_lru;
         return true;
     } else {
         miss_count++;
@@ -213,15 +217,19 @@ evicted_line_t *handle_miss(cache_t *cache, uword_t addr, operation_t operation,
     evicted_line_t *evicted_line = malloc(sizeof(evicted_line_t));
     evicted_line->data = (byte_t *) calloc(cache->B, sizeof(byte_t));
     /* your implementation */
+    size_t b = _log(cache->B);
     __uint32_t S = cache->C / (cache->A * cache->B);
-    __uint32_t t = addr >> (S + cache->B);
-    __uint32_t I = (addr >> cache->B) & ((1 << _log(S)) - 1);
+    __uint32_t t = addr >> (_log(S) + b);
+    __uint32_t I = (addr >> b) & ((1 << _log(S)) - 1);
     bool empty = false;
     //search for empty line 
-    cache_line_t *line = cache->sets[I].lines;
+    cache_set_t *cset = &cache->sets[I];
+    cache_line_t *line;
     for(int i = 0; i < cache->A; i++) {
-        if(!line->valid) { // found empty line
+        if(!cset->lines[i].valid) { // found empty line
             empty = true;
+            line = &cset->lines[i];
+            i = cache->A;
         }
     }
     //cache is full; evict
@@ -230,22 +238,27 @@ evicted_line_t *handle_miss(cache_t *cache, uword_t addr, operation_t operation,
         //fill in evicted_line info 
         evicted_line->valid = line->valid;
         evicted_line->dirty = line->dirty;
-        evicted_line->addr = addr;
-        evicted_line->data = incoming_data;
+        //need to reconstruct the address 
+        evicted_line->addr = line->tag <<(_log(S) + b);
+        evicted_line->addr = evicted_line->addr | (I << b);
+        memcpy(evicted_line->data, line->data, (1<<b));
+        if(evicted_line->dirty == 1){
+            dirty_eviction_count++;
+        } else {
+            clean_eviction_count++;
+        }
     }
     //fetch mem block from M to $ + place in avail. line
     //update valid + tag + dirty + lru
-    if(evicted_line->dirty == 1){
-        dirty_eviction_count++;
-    } else {
-        clean_eviction_count++;
-    }
-    line->valid = 1;
+    line->valid = true;
     line->dirty = (operation == WRITE);
-    line->data = incoming_data;
+    if(operation == WRITE){
+        if(incoming_data){
+            memcpy(line->data, incoming_data, (1<<cache->B));
+        }
+    }
     line->tag = t;
     line->lru = next_lru;
-
     return evicted_line;
 }
 
@@ -255,19 +268,12 @@ evicted_line_t *handle_miss(cache_t *cache, uword_t addr, operation_t operation,
  */
 void get_word_cache(cache_t *cache, uword_t addr, word_t *dest) {
     /* Your implementation */
-    __uint32_t S = cache->C / (cache->A * cache->B);
-    __uint32_t t = addr >> (S + cache->B);
-    __uint32_t I = (addr >> cache->B) & ((1 << _log(S)) - 1);
-    __uint32_t f = addr & ((1 << _log(cache->B)) - 1);
-    cache_line_t *line = cache->sets[I].lines;
-    int i = 0;
-    bool done = false;
-    while (i < cache->A && !done) {
-        if(line->tag == t) {
-            dest = (word_t *)(line->data + f);
-            done = true;
-        }
-        i++;
+
+    for(int i=0; i<8; i++){
+        // uword_t cur = addr + i;
+        // cache_line_t *line = get_line(cache, cur);
+        // uword_t index = ((1 << cache->B) -1 ) & cur;
+        // dest[i] = line->data[index];
     }
 
 }
@@ -278,20 +284,13 @@ void get_word_cache(cache_t *cache, uword_t addr, word_t *dest) {
  */
 void set_word_cache(cache_t *cache, uword_t addr, word_t val) {
     /* Your implementation */
-    __uint32_t S = cache->C / (cache->A * cache->B);
-    __uint32_t t = addr >> (S + cache->B);
-    __uint32_t I = (addr >> cache->B) & ((1 << _log(S)) - 1);
-    //__uint32_t f = addr & ((1 << _log(cache->B)) - 1);
-    cache_line_t *line = cache->sets[I].lines;
-    int i = 0;
-    bool done = false;
-    while (i < cache->A && !done) {
-        if(line->tag == t) {
-            // byte_t *temp = line->data + f;
-            // temp = (byte_t *)val;
-            // done = true;
-        }
-        i++;
+    // byte_t *valPtr = (byte_t *)&val;
+
+    for(int i=0; i<8; i++){
+        // uword_t cur = addr + i;
+        // cache_line_t *line = get_line(cache, cur);
+        // uword_t index = ((1 << cache->B) -1 ) & cur;
+        // line->data[index] = valPtr[i];
     }
 }
 

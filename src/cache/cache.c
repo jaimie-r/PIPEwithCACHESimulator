@@ -280,11 +280,10 @@ void set_word_cache(cache_t *cache, uword_t addr, word_t val) {
     /* Your implementation */
     byte_t *valPtr = (byte_t *)&val;
     cache_line_t *line = get_line(cache, addr);
-    line->data = valPtr;
+    memcpy(line->data, valPtr, 8);
 
     // for(int i=0; i<8; i++){
     //     // uword_t cur = addr + i;
-        
     //     //dont need to use offset (copying over all 8 bytes)
     //     // uword_t index = ((1 << cache->B) -1 ) & cur;
     //     // line->data[index] = valPtr[i];

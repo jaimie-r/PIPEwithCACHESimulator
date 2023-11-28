@@ -196,8 +196,8 @@ bool check_hit(cache_t *cache, uword_t addr, operation_t operation) {
     if(line) {
         line->dirty |= operation == WRITE;
         hit_count++;
-        line->lru = next_lru;
-        next_lru++;  
+        next_lru++; 
+        line->lru = next_lru; 
         return true;
     } else {
         miss_count++;

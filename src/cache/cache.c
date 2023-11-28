@@ -264,10 +264,10 @@ void get_word_cache(cache_t *cache, uword_t addr, word_t *dest) {
     /* Your implementation */
 
     for(int i=0; i<8; i++){
-        // uword_t cur = addr + i;
-        // cache_line_t *line = get_line(cache, cur);
-        // uword_t index = ((1 << cache->B) -1 ) & cur;
-        // dest[i] = line->data[index];
+        uword_t cur = addr + i;
+        cache_line_t *line = get_line(cache, cur);
+        uword_t index = ((1 << cache->B) -1 ) & cur;
+        dest[i] = line->data[index];
     }
 
 }
@@ -280,6 +280,7 @@ void set_word_cache(cache_t *cache, uword_t addr, word_t val) {
     /* Your implementation */
     byte_t *valPtr = (byte_t *)&val;
     cache_line_t *line = get_line(cache, addr);
+    line->data = valPtr;
 
     // for(int i=0; i<8; i++){
     //     // uword_t cur = addr + i;

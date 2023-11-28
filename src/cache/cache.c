@@ -247,8 +247,8 @@ evicted_line_t *handle_miss(cache_t *cache, uword_t addr, operation_t operation,
     //update valid + tag + dirty + lru
     line->valid = true;
     line->dirty = (operation == WRITE);
-    if(incoming_data && operation == WRITE){
-        line->data = (byte_t *) calloc(cache->B, sizeof(byte_t));
+    memcpy(evicted_line->data, line->data, cache->B);
+    if(incoming_data){
         memcpy(line->data, incoming_data, (1<<b));
     }
     line->tag = t;
@@ -262,12 +262,11 @@ evicted_line_t *handle_miss(cache_t *cache, uword_t addr, operation_t operation,
  */
 void get_word_cache(cache_t *cache, uword_t addr, word_t *dest) {
     /* Your implementation */
-
+    byte_t *dst = (byte_t*) dest;
     for(int i=0; i<8; i++){
         uword_t cur = addr + i;
         cache_line_t *line = get_line(cache, cur);
-        uword_t index = ((1 << cache->B) -1 ) & cur;
-        dest[i] = line->data[index];
+        dst[i] = line->data[(cache->B -1) & cur];
     }
 
 }
@@ -279,15 +278,11 @@ void get_word_cache(cache_t *cache, uword_t addr, word_t *dest) {
 void set_word_cache(cache_t *cache, uword_t addr, word_t val) {
     /* Your implementation */
     byte_t *valPtr = (byte_t *)&val;
-    cache_line_t *line = get_line(cache, addr);
-    memcpy(line->data, valPtr, 8);
-
-    // for(int i=0; i<8; i++){
-    //     // uword_t cur = addr + i;
-    //     //dont need to use offset (copying over all 8 bytes)
-    //     // uword_t index = ((1 << cache->B) -1 ) & cur;
-    //     // line->data[index] = valPtr[i];
-    // }
+    for(int i=0; i<8; i++){
+        uword_t cur = addr + i;
+        cache_line_t *line = get_line(cache, cur);
+        line->data[(cache->B -1) & cur] = valPtr[i];
+    }
 }
 
 /*

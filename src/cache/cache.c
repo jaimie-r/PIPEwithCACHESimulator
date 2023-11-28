@@ -196,15 +196,14 @@ bool check_hit(cache_t *cache, uword_t addr, operation_t operation) {
     if(line) {
         line->dirty |= operation == WRITE;
         hit_count++;
-        next_lru++; 
         line->lru = next_lru; 
+        next_lru++; 
         return true;
     } else {
         miss_count++;
         return false;
     }
 }
-
 /*  STUDENT TO-DO:
  *  Handles Misses, evicting from the cache if necessary.
  *  Fill out the evicted_line_t struct with info regarding the evicted line.

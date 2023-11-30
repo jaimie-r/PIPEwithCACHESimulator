@@ -237,7 +237,7 @@ extract_regs(uint32_t insnbits, opcode_t op,
         *src2 = XZR_NUM;
     }
 
-    if(*dst == SP_NUM && (op != OP_ADD_RI || op != OP_SUB_RI)) {
+    if(*dst == SP_NUM && (op != OP_ADD_RI && op != OP_SUB_RI)) {
         *dst = XZR_NUM;
     }
 

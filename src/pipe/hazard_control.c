@@ -82,7 +82,9 @@ comb_logic_t handle_hazards(opcode_t D_opcode, uint8_t D_src1, uint8_t D_src2,
     /* Students: Change the below code IN WEEK TWO -- do not touch for week one */
     //
     //in f/d/x/m/w do we in each stage check for what to do based on status? ex stall/bubble
+    // check dmem between check w and m's statuses
     bool w_stall = W_out->status == STAT_HLT; //|| W_out->status == STAT_INS;
+    
     bool m_stall = M_out->status == STAT_HLT || w_stall;//|| M_out->status == STAT_INS || w_stall;
     bool x_stall = X_out->status == STAT_HLT || X_out->status == STAT_INS || m_stall;//|| X_out->status == STAT_INS || m_stall;
     bool d_stall = D_out->status == STAT_HLT || D_out->status == STAT_INS || x_stall;//|| D_out->status == STAT_INS || x_stall;

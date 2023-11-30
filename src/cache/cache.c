@@ -152,7 +152,7 @@ cache_line_t *get_line(cache_t *cache, uword_t addr) {
     /* your implementation */
     __uint32_t s = _log(cache->C / (cache->A * cache->B));
     size_t b = _log(cache->B);
-    __uint32_t t = addr >> (s + b);
+    uword_t t = addr >> (s + b);
     __uint32_t I = (addr >> b) & ((1 << s) - 1);
     cache_set_t *cset = &cache->sets[I];
     for(int i = 0; i < cache->A; i++) {
@@ -214,7 +214,7 @@ evicted_line_t *handle_miss(cache_t *cache, uword_t addr, operation_t operation,
     /* your implementation */
     size_t b = _log(cache->B);
     size_t s = _log(cache->C / (cache->A * cache->B));
-    __uint32_t t = addr >> (s + b);
+    uword_t t = addr >> (s + b);
     __uint32_t I = (addr >> b) & ((1 << s) - 1);
     bool empty = false;
     //search for empty line 
@@ -253,6 +253,7 @@ evicted_line_t *handle_miss(cache_t *cache, uword_t addr, operation_t operation,
     }
     line->tag = t;
     line->lru = next_lru;
+    next_lru++;
     return evicted_line;
 }
 
@@ -264,9 +265,9 @@ void get_word_cache(cache_t *cache, uword_t addr, word_t *dest) {
     /* Your implementation */
     byte_t *dst = (byte_t*) dest;
     for(int i=0; i<8; i++){
-        uword_t cur = addr + i;
-        cache_line_t *line = get_line(cache, cur);
-        dst[i] = line->data[(cache->B -1) & cur];
+        cache_line_t *line = get_line(cache, addr);
+        dst[i] = line->data[addr % cache->B];
+        addr++;
     }
 
 }
@@ -279,9 +280,9 @@ void set_word_cache(cache_t *cache, uword_t addr, word_t val) {
     /* Your implementation */
     byte_t *valPtr = (byte_t *)&val;
     for(int i=0; i<8; i++){
-        uword_t cur = addr + i;
-        cache_line_t *line = get_line(cache, cur);
-        line->data[(cache->B -1) & cur] = valPtr[i];
+        cache_line_t *line = get_line(cache, addr);
+        line->data[addr % cache->B] = valPtr[i];
+        addr++;
     }
 }
 
